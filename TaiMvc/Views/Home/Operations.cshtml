@@ -1,21 +1,46 @@
 ﻿@*
     Files operations - upload + download
+
+
+	DLA PRZESYŁU POJEDYNCZEGO PLIKU.....
+	<form method="post" enctype="multipart/form-data">
+	 <input type="file" name="file" /> 
+    	<button type="submit">Upload</button>
+     </form>
 *@
-@{
-    ViewData["Title"] = "Home Page";
-}
+
 <h2>Basic File Upload</h2>
 
-@using (Html.BeginForm("Index ", "File Upload", FormMethod.Post, new {enctype = "multipart/form-data"}))
+
+<form method="post" enctype="multipart/form-data">
+	<input type="file" name="files" multiple />
+	<button type="submit">Upload</button>
+</form>
+
+<!-- To show the success message to the user  -->
+@if (ViewBag.Message != null)
 {
-    <label for = "file"> Upload Image: </label>
-    <input type= "file" name = "file" id = "file"/>
+	<div class="alert alert-success" style="margin-top:50px">
+		@ViewBag.Message
+	</div>
 
-    <br> <br>
-
-    <input type="submit" value="upload"/>
-    <br> <br>
-
-    @ViewBag.Message
-    <br>
 }
+<h2>Basic File Download</h2>
+
+<p style="margin-top: 50px">List of Files</p>
+<!-- Get all the files from the server -->
+<ul>
+	@foreach (var item in Model.Files)
+	{
+		<li>
+			<a asp-action="Download"
+			   asp-route-filename="@item.Name">
+				@item.Name
+			</a>
+		</li>
+	}
+</ul>
+
+
+
+
