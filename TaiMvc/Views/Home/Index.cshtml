@@ -1,22 +1,37 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@model List<string>
+@{
     ViewData["Title"] = "Home Page";
 }
-@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
-@*<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>*@
 
 <div class="text-center">
     @if (SignInManager.IsSignedIn(User))
     {
-        <h1 class="display-4">Jestes zalogowany</h1>
+        @if (Model != null)
+        {
+            <h3>Pobieranie Zwykłe</h3>
+            @foreach (var fileName in Model)
+            {
+                <h5>@Html.ActionLink(fileName, "DownloadFile", "Home", new { fileName = fileName})</h5>
+                @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
+            }
+            <h3>Pobieranie Strumieniowe</h3>
+            @foreach (var fileName in Model)
+            {
+                <h5>@Html.ActionLink(fileName, "DownloadFile", "Home", new { fileName = fileName})</h5>
+                @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
+            }
+        }
+        else
+        {
+            <h3>Brak plików do pobrania</h3>
+        }
     }
     else
     {
-        <h1 class="display-4">Jestes niezalogowany</h1>
+        <h1>Proszę się zalogować</h1>
     }
+
 </div>
