@@ -11,7 +11,7 @@ build_property.RootNamespace = TaiMvc
 build_property.ProjectDir = C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
-build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = true
 build_property.MSBuildProjectDirectory = C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc
 build_property._RazorSourceGeneratorDebug = 
 
