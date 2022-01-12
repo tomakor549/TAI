@@ -11,8 +11,6 @@ namespace TaiMvc.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        readonly ApplicationDbContext db;
-
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)

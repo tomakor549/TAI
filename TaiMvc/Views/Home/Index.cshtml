@@ -14,13 +14,13 @@
             <h3>Pobieranie Zwykłe</h3>
             @foreach (var fileName in Model)
             {
-                <h5>@Html.ActionLink(fileName, "DownloadFile", "Home", new { fileName = fileName})</h5>
+                <h5>@Html.ActionLink(fileName, "DownloadFile", "FileOperation", new { fileName = fileName})</h5>
                 @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
             }
             <h3>Pobieranie Strumieniowe</h3>
             @foreach (var fileName in Model)
             {
-                <h5>@Html.ActionLink(fileName, "DownloadFile", "Home", new { fileName = fileName})</h5>
+                <h5>@Html.ActionLink(fileName, "StreamDownload", "FileOperation", new { fileName = fileName})</h5>
                 @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
             }
         }
