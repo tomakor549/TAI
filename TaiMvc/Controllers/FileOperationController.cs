@@ -82,9 +82,20 @@ namespace TaiMvc.Controllers
 
         }
 
-        public string GetString()
+        //tu zaczyna się upload normalny
+        public IActionResult Operations() => View();
+        public IActionResult OperationUpload(IFormFile file)
         {
-            return "klawy tekst";
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var path = Path.Join(user.Localization, file.FileName);
+            using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+            {
+                if (file != null)
+                {
+                    file.CopyTo(fileStream);
+                }
+            }
+            return RedirectToAction("Operations");
         }
     }
 }
