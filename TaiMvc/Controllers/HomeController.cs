@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using TaiMvc.Data;
 using TaiMvc.Models;
 
 namespace TaiMvc.Controllers
 {
     public class HomeController : Controller
     {
+        private HomeModel _homeModel;
+
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly ILogger<HomeController> _logger;
@@ -17,6 +17,7 @@ namespace TaiMvc.Controllers
         {
             _logger = logger;
             _userManager = userManager;
+            _homeModel = new HomeModel();
         }
 
         public IActionResult Index()
@@ -27,30 +28,13 @@ namespace TaiMvc.Controllers
                 return View(null);
             }
             var user = _userManager.FindByIdAsync(userId).Result;
-            var list = GetFilesList(user.Localization);
-            return View(list);
+            _homeModel.List = GetFilesList(user.Localization);
+            return View(_homeModel);
         }
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public FileResult DownloadFile(string fileName)
-        {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            var path = Path.Join(user.Localization, fileName);
-            //Read the File data into Byte Array.
-            byte[] bytes = System.IO.File.ReadAllBytes(path);
-
-            //Send the File to Download.
-            return File(bytes, "application/octet-stream", "filename.pdf");
         }
 
         private static List<string>? GetFilesList(string path)

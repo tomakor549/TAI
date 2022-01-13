@@ -1,24 +1,26 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@model List<string>
+@using TaiMvc.Controllers
+@model HomeModel
 @{
     ViewData["Title"] = "Home Page";
 }
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+   
 
 <div class="text-center">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (Model != null)
+        @if (Model != null && Model.List != null)
         {
             <h3>Pobieranie Zwykłe</h3>
-            @foreach (var fileName in Model)
+            @foreach (var fileName in Model.List)
             {
                 <h5>@Html.ActionLink(fileName, "DownloadFile", "FileOperation", new { fileName = fileName})</h5>
                 @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
             }
             <h3>Pobieranie Strumieniowe</h3>
-            @foreach (var fileName in Model)
+            @foreach (var fileName in Model.List)
             {
                 <h5>@Html.ActionLink(fileName, "StreamDownload", "FileOperation", new { fileName = fileName})</h5>
                 @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@

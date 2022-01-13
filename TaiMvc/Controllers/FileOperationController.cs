@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,14 +14,41 @@ namespace TaiMvc.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public FileOperationController(UserManager<ApplicationUser> userManager)
+        private Stopwatch stopWatch = new Stopwatch();
+
+        private readonly ILogger<FileOperationController> _logger;
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            _userManager = userManager;
+            string? actionName = filterContext.ActionDescriptor.DisplayName;
+            if (actionName != null)
+            {
+                if (actionName.Contains("DownloadFile") || actionName.Contains("StreamDownload"))
+                {
+                    stopWatch.Reset();
+                    stopWatch.Start();
+                }
+            }
         }
 
-        public IActionResult Index()
+        public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            return View();
+            string? actionName = filterContext.ActionDescriptor.DisplayName;
+            if (actionName != null)
+            {
+                if (actionName.Contains("DownloadFile") || actionName.Contains("StreamDownload"))
+                {
+                    stopWatch.Stop();
+                    var time = stopWatch.ElapsedMilliseconds;
+                    _logger.LogInformation("Time: " + time.ToString() + "ms");
+                    Console.WriteLine(time);
+                }
+            }
+        }
+        public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+            _logger = logger;
         }
 
         public FileResult? DownloadFile(string fileName)
@@ -53,6 +82,9 @@ namespace TaiMvc.Controllers
 
         }
 
-
+        public string GetString()
+        {
+            return "klawy tekst";
+        }
     }
 }
