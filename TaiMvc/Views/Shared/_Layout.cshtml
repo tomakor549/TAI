@@ -31,7 +31,9 @@
                         </li> 
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Operations">Files Operation</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Files Operations</a>
+
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Operations">Files Upload</a>
                         }
                     </ul>
                     <partial name="_LoginPartial" />

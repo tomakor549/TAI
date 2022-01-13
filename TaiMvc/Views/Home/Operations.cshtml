@@ -1,27 +1,12 @@
 ﻿@*
-    Files operations - upload + download
-
-
-	DLA PRZESYŁU POJEDYNCZEGO PLIKU.....
-	<form method="post" enctype="multipart/form-data">
-	 <input type="file" name="file" /> 
-    	<button type="submit">Upload</button>
-     </form>
+     PLIK DO UPLOADD
 *@
+<div>
+    <h4>Single File Upload</h4>
+    <form asp-controller="Home" asp-action="OperationUpload"
+          enctype="multipart/form-data" method="post">
+        <input type="file" name="file" />
+        <button type="submit">Submit</button>
+    </form>
+</div>
 
-<h2>Basic File Upload</h2>
-
-@using (Html.BeginForm("Index ", "File Upload", FormMethod.Post, new {enctype = "multipart/form-data"}))
-{
-    
-    <label for = "file"> Upload Image: </label>
-    <input type= "file" name = "file" id = "file"/>
-
-    <br> <br>
-
-    <input type="submit" value="upload"/>
-    <br> <br>
-
-    @ViewBag.Message
-    <br>
-}

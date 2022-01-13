@@ -2,6 +2,59 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "Aardvark.Base/5.1.25": {
+        "type": "package",
+        "dependencies": {
+          "Aardvark.Base.Telemetry": "[5.1.25]",
+          "System.Collections.Immutable": "1.7.0",
+          "System.Text.Json": "4.7.2"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/Aardvark.Base.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Aardvark.Base.dll": {}
+        }
+      },
+      "Aardvark.Base.FSharp/5.1.25": {
+        "type": "package",
+        "dependencies": {
+          "Aardvark.Base": "[5.1.25]",
+          "Aardvark.Base.TypeProviders": "[4.5.15, 4.6.0)",
+          "DevILSharp": "[0.2.9, 0.3.0)",
+          "FSharp.Core": "5.0.0",
+          "FSharp.Data.Adaptive": "[1.2.0, 1.3.0)",
+          "FsPickler": "[5.3.2, 5.4.0)",
+          "System.Dynamic.Runtime": "[4.3.0, 4.4.0)"
+        },
+        "compile": {
+          "lib/netstandard2.0/Aardvark.Base.FSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Aardvark.Base.FSharp.dll": {}
+        }
+      },
+      "Aardvark.Base.Telemetry/5.1.25": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Aardvark.Base.Telemetry.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Aardvark.Base.Telemetry.dll": {}
+        }
+      },
+      "Aardvark.Base.TypeProviders/4.5.15": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Aardvark.Base.TypeProviders.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Aardvark.Base.TypeProviders.dll": {}
+        }
+      },
       "Abp/7.0.1": {
         "type": "package",
         "dependencies": {
@@ -155,6 +208,94 @@
         },
         "runtime": {
           "lib/netstandard2.0/Castle.Windsor.MsDependencyInjection.dll": {}
+        }
+      },
+      "DevILSharp/0.2.9": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/DevILSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/DevILSharp.dll": {}
+        }
+      },
+      "FSharp.Core/5.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/FSharp.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FSharp.Core.dll": {}
+        },
+        "resource": {
+          "lib/netstandard2.0/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard2.0/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard2.0/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard2.0/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard2.0/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard2.0/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard2.0/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard2.0/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard2.0/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard2.0/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard2.0/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard2.0/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard2.0/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "FSharp.Data.Adaptive/1.2.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "System.Reflection.Emit.Lightweight": "4.6.0"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/FSharp.Data.Adaptive.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/FSharp.Data.Adaptive.dll": {}
+        }
+      },
+      "FsPickler/5.3.2": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.3.2",
+          "System.Reflection.Emit.Lightweight": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/FsPickler.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FsPickler.dll": {}
         }
       },
       "Humanizer.Core/2.8.26": {
@@ -3639,6 +3780,7 @@
           "lib/net6.0/System.Text.Json.dll": {}
         },
         "build": {
+          "build/System.Text.Json.targets": {},
           "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
@@ -3860,6 +4002,75 @@
     }
   },
   "libraries": {
+    "Aardvark.Base/5.1.25": {
+      "sha512": "B+OALuN7GdbSEVi4gHwIlR14iVM/QiH+9raYLmYfOwf+U8J7/Frzk1qascDEN1Wxqx7SuzeoFQpKywOll1JaLA==",
+      "type": "package",
+      "path": "aardvark.base/5.1.25",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aardvark.base.5.1.25.nupkg.sha512",
+        "aardvark.base.nuspec",
+        "lib/netcoreapp3.1/Aardvark.Base.dll",
+        "lib/netcoreapp3.1/Aardvark.Base.pdb",
+        "lib/netcoreapp3.1/Aardvark.Base.xml",
+        "lib/netstandard2.0/Aardvark.Base.dll",
+        "lib/netstandard2.0/Aardvark.Base.pdb",
+        "lib/netstandard2.0/Aardvark.Base.xml"
+      ]
+    },
+    "Aardvark.Base.FSharp/5.1.25": {
+      "sha512": "S+qiDtB9Apzg4UZP21fBJAtLgNiORn0YC+rabWzLk7d9a624sSavVgDCw+ll0XTiO9A7i6qCjOP8qjwSYAGQug==",
+      "type": "package",
+      "path": "aardvark.base.fsharp/5.1.25",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aardvark.base.fsharp.5.1.25.nupkg.sha512",
+        "aardvark.base.fsharp.nuspec",
+        "lib/netstandard2.0/Aardvark.Base.FSharp.dll",
+        "lib/netstandard2.0/Aardvark.Base.FSharp.pdb",
+        "lib/netstandard2.0/Aardvark.Base.FSharp.xml"
+      ]
+    },
+    "Aardvark.Base.Telemetry/5.1.25": {
+      "sha512": "ldCpP0fLK8kOvI0HhKYuEtnAGLkGxVkjpzViDikd66nOAuZqR0hQzNKVBiwdIaxkqFeHymlJvIeD0+yP0QKXjA==",
+      "type": "package",
+      "path": "aardvark.base.telemetry/5.1.25",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aardvark.base.telemetry.5.1.25.nupkg.sha512",
+        "aardvark.base.telemetry.nuspec",
+        "lib/netstandard2.0/Aardvark.Base.Telemetry.dll",
+        "lib/netstandard2.0/Aardvark.Base.Telemetry.pdb",
+        "lib/netstandard2.0/Aardvark.Base.Telemetry.xml"
+      ]
+    },
+    "Aardvark.Base.TypeProviders/4.5.15": {
+      "sha512": "+jywMuRkNb8bS3IWyPVE8EQv6SOz3voS1cE36OHNtl1G+vw7+m3yUZfTTWyF9zYT+A8lOCs4ZoQ3j+gFTl9U7A==",
+      "type": "package",
+      "path": "aardvark.base.typeproviders/4.5.15",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aardvark.base.typeproviders.4.5.15.nupkg.sha512",
+        "aardvark.base.typeproviders.nuspec",
+        "lib/net45/Aardvark.Base.TypeProviders.DesignTime.dll",
+        "lib/net45/Aardvark.Base.TypeProviders.DesignTime.pdb",
+        "lib/net45/Aardvark.Base.TypeProviders.dll",
+        "lib/net45/Aardvark.Base.TypeProviders.pdb",
+        "lib/netstandard2.0/Aardvark.Base.TypeProviders.DesignTime.dll",
+        "lib/netstandard2.0/Aardvark.Base.TypeProviders.DesignTime.pdb",
+        "lib/netstandard2.0/Aardvark.Base.TypeProviders.dll",
+        "lib/netstandard2.0/Aardvark.Base.TypeProviders.pdb",
+        "typeproviders/fsharp41/net45/Aardvark.Base.TypeProviders.DesignTime.dll",
+        "typeproviders/fsharp41/net45/Aardvark.Base.TypeProviders.DesignTime.pdb",
+        "typeproviders/fsharp41/net45/FSharp.Core.dll",
+        "typeproviders/fsharp41/netstandard2.0/Aardvark.Base.TypeProviders.DesignTime.dll",
+        "typeproviders/fsharp41/netstandard2.0/Aardvark.Base.TypeProviders.DesignTime.pdb"
+      ]
+    },
     "Abp/7.0.1": {
       "sha512": "ANmrLdGkJ0FFPAAifkBv+gWjRm56hdYbDANc1zuswggzXOdfqKq4FQg5uY8m7MWl5A42lkAfG+PdZFwFo54+6A==",
       "type": "package",
@@ -4010,6 +4221,129 @@
         "castle.windsor.msdependencyinjection.nuspec",
         "lib/netstandard2.0/Castle.Windsor.MsDependencyInjection.dll",
         "lib/netstandard2.0/Castle.Windsor.MsDependencyInjection.pdb"
+      ]
+    },
+    "DevILSharp/0.2.9": {
+      "sha512": "y/juBq6JYqALh3698i57kOz/E3wUlRfaFXtLKBEVTifMnPWxfh9TGxsVLhQb8aq/kmmKkjwXz5ZpWnF5nqS1ww==",
+      "type": "package",
+      "path": "devilsharp/0.2.9",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "devilsharp.0.2.9.nupkg.sha512",
+        "devilsharp.nuspec",
+        "lib/netstandard2.0/DevILSharp.dll",
+        "lib/netstandard2.0/DevILSharp.pdb"
+      ]
+    },
+    "FSharp.Core/5.0.0": {
+      "sha512": "iHoYXA0VaSQUONGENB1aVafjDDZDZpwu39MtaRCTrmwFW/cTcK0b2yKNVYneFHJMc3ChtsSoM9lNtJ1dYXkHfA==",
+      "type": "package",
+      "path": "fsharp.core/5.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "fsharp.core.5.0.0.nupkg.sha512",
+        "fsharp.core.nuspec",
+        "lib/netstandard2.0/FSharp.Core.dll",
+        "lib/netstandard2.0/FSharp.Core.xml",
+        "lib/netstandard2.0/cs/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/de/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/es/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/fr/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/it/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ja/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ko/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/pl/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/pt-BR/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ru/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/tr/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/zh-Hans/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/zh-Hant/FSharp.Core.resources.dll"
+      ]
+    },
+    "FSharp.Data.Adaptive/1.2.0": {
+      "sha512": "RQWI3UYzzjqEyqEqrQYwFJGtHN5DOAV7kU8WAqbexrurVFRaiGbJfq2RJ/94Flh2wUvVycXCDzTR+jGpaeTmuA==",
+      "type": "package",
+      "path": "fsharp.data.adaptive/1.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable/AdaptifyHelpers.fs",
+        "fable/AdaptiveHashMap/AdaptiveHashMap.fs",
+        "fable/AdaptiveHashMap/AdaptiveHashMap.fsi",
+        "fable/AdaptiveHashMap/ChangeableHashMap.fs",
+        "fable/AdaptiveHashMap/ChangeableHashMap.fsi",
+        "fable/AdaptiveHashSet/AdaptiveHashSet.fs",
+        "fable/AdaptiveHashSet/AdaptiveHashSet.fsi",
+        "fable/AdaptiveHashSet/ChangeableHashSet.fs",
+        "fable/AdaptiveHashSet/ChangeableHashSet.fsi",
+        "fable/AdaptiveIndexList/AdaptiveIndexList.fs",
+        "fable/AdaptiveIndexList/AdaptiveIndexList.fsi",
+        "fable/AdaptiveIndexList/ChangeableIndexList.fs",
+        "fable/AdaptiveIndexList/ChangeableIndexList.fsi",
+        "fable/AdaptiveValue/AdaptiveReduction.fs",
+        "fable/AdaptiveValue/AdaptiveReduction.fsi",
+        "fable/AdaptiveValue/AdaptiveValue.fs",
+        "fable/AdaptiveValue/AdaptiveValue.fsi",
+        "fable/AssemblyInfo.fs",
+        "fable/CollectionExtensions.fs",
+        "fable/ComputationExpressions.fs",
+        "fable/Core/AdaptiveObject.fs",
+        "fable/Core/AdaptiveToken.fs",
+        "fable/Core/Callbacks.fs",
+        "fable/Core/Core.fs",
+        "fable/Core/Transaction.fs",
+        "fable/Datastructures/Deltas.fs",
+        "fable/Datastructures/HashCollections.fs",
+        "fable/Datastructures/HashMapDelta.fs",
+        "fable/Datastructures/HashSetDelta.fs",
+        "fable/Datastructures/Index.fs",
+        "fable/Datastructures/Index.fsi",
+        "fable/Datastructures/IndexList.fs",
+        "fable/Datastructures/IndexListDelta.fs",
+        "fable/Datastructures/MapExt.fs",
+        "fable/Datastructures/MultiSetMap.fs",
+        "fable/Datastructures/Operations.fs",
+        "fable/Equality.fs",
+        "fable/EvaluationCallbackExtensions.fs",
+        "fable/FSharp.Data.Adaptive.fsproj",
+        "fable/FableHelpers.fs",
+        "fable/ShallowEquality.fs",
+        "fable/Traceable/AbstractVal.fs",
+        "fable/Traceable/CountingHashSet.fs",
+        "fable/Traceable/History.fs",
+        "fable/Traceable/Instances.fs",
+        "fable/Traceable/Traceable.fs",
+        "fable/Utilities/Cache.fs",
+        "fable/Utilities/PriorityQueue.fs",
+        "fable/Utilities/Utilities.fs",
+        "fsharp.data.adaptive.1.2.0.nupkg.sha512",
+        "fsharp.data.adaptive.nuspec",
+        "lib/netcoreapp3.1/FSharp.Data.Adaptive.XML",
+        "lib/netcoreapp3.1/FSharp.Data.Adaptive.dll",
+        "lib/netcoreapp3.1/FSharp.Data.Adaptive.pdb",
+        "lib/netstandard2.0/FSharp.Data.Adaptive.XML",
+        "lib/netstandard2.0/FSharp.Data.Adaptive.dll",
+        "lib/netstandard2.0/FSharp.Data.Adaptive.pdb"
+      ]
+    },
+    "FsPickler/5.3.2": {
+      "sha512": "LFtxXpQNor8az1ez3rN9oz2cqf/06i9yTrPyJ9R83qLEpFAU7Of0WL2hoSXzLHer4lh+6mO1NV4VQFiBzNRtjw==",
+      "type": "package",
+      "path": "fspickler/5.3.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fspickler.5.3.2.nupkg.sha512",
+        "fspickler.nuspec",
+        "lib/net45/FsPickler.dll",
+        "lib/net45/FsPickler.pdb",
+        "lib/net45/FsPickler.xml",
+        "lib/netstandard2.0/FsPickler.dll",
+        "lib/netstandard2.0/FsPickler.pdb",
+        "lib/netstandard2.0/FsPickler.xml"
       ]
     },
     "Humanizer.Core/2.8.26": {
@@ -11969,6 +12303,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "Aardvark.Base.FSharp >= 5.1.25",
       "Abp.AspNetCore >= 7.0.1",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 6.0.1",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.1",
@@ -12017,6 +12352,10 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "Aardvark.Base.FSharp": {
+            "target": "Package",
+            "version": "[5.1.25, )"
+          },
           "Abp.AspNetCore": {
             "target": "Package",
             "version": "[7.0.1, )"

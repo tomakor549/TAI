@@ -40,6 +40,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Aardvark.Base.FSharp": {
+              "target": "Package",
+              "version": "[5.1.25, )"
+            },
             "Abp.AspNetCore": {
               "target": "Package",
               "version": "[7.0.1, )"
