@@ -22,7 +22,7 @@
             <h3>Pobieranie Strumieniowe</h3>
             @foreach (var fileName in Model.List)
             {
-                <h5>@Html.ActionLink(fileName, "StreamDownload", "FileOperation", new { fileName = fileName})</h5>
+                <h5>@Html.ActionLink(fileName, "StreamDownloadFile", "FileOperation", new { fileName = fileName})</h5>
                 @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
             }
         }

@@ -26,7 +26,7 @@ namespace TaiMvc.Controllers
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("StreamDownload"))
+                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload"))
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -39,7 +39,7 @@ namespace TaiMvc.Controllers
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("StreamDownload"))
+                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload"))
                 {
                     stopWatch.Stop();
                     var time = stopWatch.ElapsedMilliseconds;
@@ -74,7 +74,7 @@ namespace TaiMvc.Controllers
             return File(bytes, "application/octet-stream", fileName);
         }
 
-        public FileStreamResult StreamDownload(string fileName)
+        public FileStreamResult StreamDownloadFile(string fileName)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
