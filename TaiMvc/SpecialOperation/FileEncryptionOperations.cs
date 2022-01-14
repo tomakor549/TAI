@@ -48,7 +48,40 @@ namespace TaiMvc.Models
             }
         }
 
-        public static void FileDecrypt(string inputFilePath, string outputFilePath, string password)
+        public static void FileEncrypt(string fileTargetPath, string password, IFormFile file)
+        {
+            if (file == null)
+                return;
+
+            byte[] salt = GenerateSalt();
+            byte[] passwords = Encoding.UTF8.GetBytes(password);
+            Aes AES = Aes.Create();
+            AES.KeySize = 256;//aes 256 bit encryption c#
+            AES.BlockSize = 128;//aes 128 bit encryption c#
+            AES.Padding = PaddingMode.PKCS7;
+            var key = new Rfc2898DeriveBytes(passwords, salt, 50000);
+            AES.Key = key.GetBytes(AES.KeySize / 8);
+            AES.IV = key.GetBytes(AES.BlockSize / 8);
+            AES.Mode = CipherMode.CFB;
+            using (FileStream fsCrypt = new FileStream(fileTargetPath + ".aes", FileMode.Create, FileAccess.Write))//bazowo 4096 bajtów na rozmiar buffera
+            {
+                fsCrypt.Write(salt, 0, salt.Length);
+                using (CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    using (Stream fsIn = file.OpenReadStream())
+                    {
+                        byte[] buffer = new byte[1048576];
+                        int read;
+                        while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            cs.Write(buffer, 0, read);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static byte[] FileDecrypt(string inputFilePath, string password)
         {
             byte[] passwords = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[32];
@@ -65,7 +98,7 @@ namespace TaiMvc.Models
                 AES.Mode = CipherMode.CFB;
                 using (CryptoStream cryptoStream = new CryptoStream(fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read))
                 {
-                    using (FileStream fsOut = new FileStream(outputFilePath, FileMode.Create))
+                    using (MemoryStream fsOut = new MemoryStream())
                     {
                         int read;
                         byte[] buffer = new byte[1048576];
@@ -73,6 +106,7 @@ namespace TaiMvc.Models
                         {
                             fsOut.Write(buffer, 0, read);
                         }
+                        return fsOut.ToArray();
                     }
                 }
             }

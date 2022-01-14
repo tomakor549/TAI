@@ -12,6 +12,8 @@ namespace TaiMvc.Controllers
 {
     public class FileOperationController : Controller
     {
+        private const string _encryptionPassword = "Haslo";
+
         private readonly UserManager<ApplicationUser> _userManager;
 
         private Stopwatch stopWatch = new Stopwatch();
@@ -55,11 +57,17 @@ namespace TaiMvc.Controllers
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
-            var len = new System.IO.FileInfo(path).Length;
+            var len = new FileInfo(path).Length;
             if (len > 2000000000)
                 return null;
-            //Read the File data into Byte Array.
-            byte[] bytes = System.IO.File.ReadAllBytes(path);
+            byte[] bytes;
+            if (fileName.EndsWith(".aes"))
+            {
+                bytes = FileEncryptionOperations.FileDecrypt(path, _encryptionPassword);
+                fileName = fileName.Remove(fileName.Length - 4);
+            }
+            else
+                bytes = System.IO.File.ReadAllBytes(path);
 
             //Send the File to Download.
             return File(bytes, "application/octet-stream", fileName);
@@ -95,6 +103,14 @@ namespace TaiMvc.Controllers
                     file.CopyTo(fileStream);
                 }
             }
+            return RedirectToAction("Operations");
+        }
+        //Encryption Download
+        public IActionResult OperationUploadEncryption(IFormFile file)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var path = Path.Join(user.Localization, file.FileName);
+            FileEncryptionOperations.FileEncrypt(path, "Haslo", file);
             return RedirectToAction("Operations");
         }
     }
