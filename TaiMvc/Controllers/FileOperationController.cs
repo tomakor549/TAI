@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Channels;
 using TaiMvc.Models;
+using TaiMvc.SpecialOperation;
 
 namespace TaiMvc.Controllers
 {
@@ -43,7 +44,7 @@ namespace TaiMvc.Controllers
                     stopWatch.Stop();
                     var time = stopWatch.ElapsedMilliseconds;
                     _logger.LogInformation("Time: " + time.ToString() + "ms");
-                    Console.WriteLine(time);
+                    System.Diagnostics.Debug.WriteLine("Time: " + time.ToString() + "ms");
                 }
             }
         }
@@ -78,11 +79,11 @@ namespace TaiMvc.Controllers
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
 
-            Response.Headers.Add("content-disposition", "attachment; filename="+fileName);
+            Response.Headers.Add("content-disposition", "attachment; filename=" + fileName);
 
+            long time = 0;
             //bufferSize 4096
-            return File(new FileStream(path, FileMode.Open),
-                        "application/octet-stream");
+            return File(new MyFileStream(path, FileMode.Open), "application/octet-stream");
 
             //other
             //return File(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096),
