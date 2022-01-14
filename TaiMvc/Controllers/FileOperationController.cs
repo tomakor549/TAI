@@ -80,8 +80,6 @@ namespace TaiMvc.Controllers
             var path = Path.Join(user.Localization, fileName);
 
             Response.Headers.Add("content-disposition", "attachment; filename=" + fileName);
-
-            long time = 0;
             //bufferSize 4096
             return File(new MyFileStream(path, FileMode.Open), "application/octet-stream");
 
