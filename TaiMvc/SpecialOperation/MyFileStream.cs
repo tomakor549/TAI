@@ -20,6 +20,5 @@ namespace TaiMvc.SpecialOperation
             System.Diagnostics.Debug.WriteLine("Time: " + _stopWatch.ElapsedMilliseconds.ToString() + "ms");
             base.Close();
         }
-
     }
 }

@@ -48,7 +48,7 @@ namespace TaiMvc.Models
             }
         }
 
-        public static void FileEncrypt(string fileTargetPath, string password, IFormFile file)
+        public static void SaveFileEncrypt(string fileTargetPath, string password, IFormFile file)
         {
             if (file == null)
                 return;
@@ -107,6 +107,36 @@ namespace TaiMvc.Models
                             fsOut.Write(buffer, 0, read);
                         }
                         return fsOut.ToArray();
+                    }
+                }
+            }
+        }
+
+        public static void FileDecrypt(ref FileStream inputStream, ref Stream outputStream, string password, int bufferSize)
+        {
+            byte[] passwords = Encoding.UTF8.GetBytes(password);
+            byte[] salt = new byte[32];
+            using (FileStream fsCrypt = inputStream)
+            {
+                fsCrypt.Read(salt, 0, salt.Length);
+                Aes AES = Aes.Create();
+                AES.KeySize = 256;//aes 256 bit encryption c#
+                AES.BlockSize = 128;//aes 128 bit encryption c#
+                var key = new Rfc2898DeriveBytes(passwords, salt, 50000);
+                AES.Key = key.GetBytes(AES.KeySize / 8);
+                AES.IV = key.GetBytes(AES.BlockSize / 8);
+                AES.Padding = PaddingMode.PKCS7;
+                AES.Mode = CipherMode.CFB;
+                using (CryptoStream cryptoStream = new (fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read))
+                {
+                    using (Stream fsOut = outputStream)
+                    {
+                        int bytesRead;
+                        byte[] buffer = new byte[bufferSize];
+                        while ((bytesRead = cryptoStream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            fsOut.WriteAsync(buffer, 0, bytesRead);
+                        }
                     }
                 }
             }

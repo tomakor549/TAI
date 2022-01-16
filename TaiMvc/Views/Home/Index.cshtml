@@ -17,13 +17,19 @@
             @foreach (var fileName in Model.List)
             {
                 <h5>@Html.ActionLink(fileName, "DownloadFile", "FileOperation", new { fileName = fileName})</h5>
-                @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
+                
             }
             <h3>Pobieranie Strumieniowe</h3>
             @foreach (var fileName in Model.List)
             {
-                <h5>@Html.ActionLink(fileName, "StreamDownloadFile", "FileOperation", new { fileName = fileName})</h5>
-                @*<button type="submit" class="w-100 btn btn-lg btn-primary" onclick="location.href='@Url.Action("DownloadFile", "Home")'">Pobierz</button>*@
+                if (fileName.EndsWith(".aes"))
+                {
+                    <h5>@Html.ActionLink(fileName, "StreamEncodingDownloadFile", "FileOperation", new { fileName = fileName})</h5>
+                }
+                else
+                {
+                    <h5>@Html.ActionLink(fileName, "StreamDownloadFile", "FileOperation", new { fileName = fileName})</h5>
+                }
             }
         }
         else

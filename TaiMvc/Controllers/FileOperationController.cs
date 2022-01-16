@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -26,7 +27,7 @@ namespace TaiMvc.Controllers
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload"))
+                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2"))
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -39,12 +40,12 @@ namespace TaiMvc.Controllers
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload"))
+                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2"))
                 {
                     stopWatch.Stop();
                     var time = stopWatch.ElapsedMilliseconds;
                     _logger.LogInformation("Time: " + time.ToString() + "ms");
-                    System.Diagnostics.Debug.WriteLine("Time: " + time.ToString() + "ms");
+                    Debug.WriteLine("Time: " + time.ToString() + "ms");
                 }
             }
         }
@@ -74,6 +75,7 @@ namespace TaiMvc.Controllers
             return File(bytes, "application/octet-stream", fileName);
         }
 
+        //normal short version stream download file
         public FileStreamResult StreamDownloadFile(string fileName)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
@@ -87,6 +89,47 @@ namespace TaiMvc.Controllers
             //return File(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096),
             //"application/octet-stream");
 
+        }
+
+        //abnormal long version stream download file - greater user control 
+        public async Task StreamDownloadFile2(string fileName)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var path = Path.Join(user.Localization, fileName);
+            fileName = fileName.Remove(fileName.Length - 4);
+
+            this.Response.StatusCode = 200;
+            this.Response.Headers.Add(HeaderNames.ContentDisposition, $"attachment; filename=\"{fileName}\"");
+            this.Response.Headers.Add(HeaderNames.ContentType, "application/octet-stream");
+            var inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            var outputStream = this.Response.Body;
+            const int bufferSize = 1024;
+            var buffer = new byte[bufferSize];
+            while (true)
+            {
+                var bytesRead = await inputStream.ReadAsync(buffer, 0, bufferSize);
+                if (bytesRead == 0) break;
+                await outputStream.WriteAsync(buffer, 0, bytesRead);
+            }
+            await outputStream.FlushAsync();
+        }
+
+        //source: https://dogschasingsquirrels.com/2020/06/02/streaming-a-response-in-net-core-webapi/
+        public async Task StreamEncodingDownloadFile(string fileName)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var path = Path.Join(user.Localization, fileName);
+            fileName = fileName.Remove(fileName.Length - 4);
+
+            this.Response.StatusCode = 200;
+            this.Response.Headers.Add(HeaderNames.ContentDisposition, $"attachment; filename=\"{fileName}\"");
+            this.Response.Headers.Add(HeaderNames.ContentType, "application/octet-stream");
+            var inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            var outputStream = this.Response.Body;
+            const int bufferSize = 1024;
+
+            FileEncryptionOperations.FileDecrypt(ref inputStream, ref outputStream, _encryptionPassword, bufferSize);
+            await outputStream.FlushAsync();
         }
 
         //tu zaczyna się upload normalny
@@ -109,8 +152,9 @@ namespace TaiMvc.Controllers
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, file.FileName);
-            FileEncryptionOperations.FileEncrypt(path, "Haslo", file);
+            FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
             return RedirectToAction("Operations");
         }
+
     }
 }
