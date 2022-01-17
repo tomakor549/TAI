@@ -62,7 +62,7 @@ namespace TaiMvc.Controllers
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             var len = new FileInfo(path).Length;
-            if (len > 2)
+            if (len > 2000000000)
                 return null;
             byte[] bytes;
             if (fileName.EndsWith(".aes"))
