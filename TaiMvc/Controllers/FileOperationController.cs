@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
@@ -12,6 +13,7 @@ using TaiMvc.SpecialOperation;
 
 namespace TaiMvc.Controllers
 {
+    [Authorize]
     public class FileOperationController : Controller
     {
         private const string _encryptionPassword = "Haslo";
@@ -60,7 +62,7 @@ namespace TaiMvc.Controllers
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             var len = new FileInfo(path).Length;
-            if (len > 2000000000)
+            if (len > 2)
                 return null;
             byte[] bytes;
             if (fileName.EndsWith(".aes"))
@@ -134,6 +136,7 @@ namespace TaiMvc.Controllers
 
         //tu zaczyna się upload normalny
         public IActionResult Operations() => View();
+
         public IActionResult OperationUpload(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
