@@ -113,12 +113,15 @@ namespace TaiMvc.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                //return await GenerateRandomUsers(1000, returnUrl);
+
+                #region createUser
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var separator = Path.DirectorySeparatorChar;
-                user.Localization = $"{Directory.GetCurrentDirectory()}{separator}{user.Id}";
+                user.Localization = $"{Directory.GetCurrentDirectory()}{separator}Users{separator}{user.Id}";
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -152,6 +155,8 @@ namespace TaiMvc.Areas.Identity.Pages.Account
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+
+                #endregion
             }
 
             // If we got this far, something failed, redisplay form
@@ -200,6 +205,29 @@ namespace TaiMvc.Areas.Identity.Pages.Account
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
+        }
+
+        private async Task<IActionResult> GenerateRandomUsers(int howMany, string returnUrl = null)
+        {
+            ApplicationUser randomUser;
+            string email;
+            for (int i = 0; i < howMany; i++)
+            {
+                randomUser = CreateUser();
+                email = $"user{i}@user.pl";
+
+                await _userStore.SetUserNameAsync(randomUser, email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(randomUser, email, CancellationToken.None);
+                var separator = Path.DirectorySeparatorChar;
+                randomUser.Localization = $"{Directory.GetCurrentDirectory()}{separator}Users{separator}{randomUser.Id}";
+                var result = await _userManager.CreateAsync(randomUser, "U" + randomUser.Id);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(randomUser, isPersistent: false);
+                    CreateDirectory(randomUser.Localization);
+                }
+            }
+            return LocalRedirect(returnUrl);
         }
     }
 }
