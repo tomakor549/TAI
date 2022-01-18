@@ -9827,19 +9827,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\venet\\.nuget\\packages\\": {}
+    "C:\\Users\\48725\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\TaiMvc.csproj",
+      "projectUniqueName": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\TaiMvc.csproj",
       "projectName": "TaiMvc",
-      "projectPath": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\TaiMvc.csproj",
-      "packagesPath": "C:\\Users\\venet\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\obj\\",
+      "projectPath": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\TaiMvc.csproj",
+      "packagesPath": "C:\\Users\\48725\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\venet\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\48725\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -9908,7 +9908,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

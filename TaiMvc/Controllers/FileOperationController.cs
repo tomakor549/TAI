@@ -139,14 +139,18 @@ namespace TaiMvc.Controllers
 
         public IActionResult OperationUpload(IFormFile file)
         {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            var path = Path.Join(user.Localization, file.FileName);
-            using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+            if (file != null)
             {
-                if (file != null)
+                var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                var path = Path.Join(user.Localization, file.FileName);
+                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
                     file.CopyTo(fileStream);
                 }
+            }
+            else
+            {
+                TempData["Message"] = "Wybierz jakiś plik do uploadu";
             }
             return RedirectToAction("Operations");
         }
@@ -154,8 +158,16 @@ namespace TaiMvc.Controllers
         public IActionResult OperationUploadEncryption(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            var path = Path.Join(user.Localization, file.FileName);
-            FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+            if (file != null)
+            {
+                var path = Path.Join(user.Localization, file.FileName);
+                FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+            }
+            else
+            {
+                TempData["Message"] = "Wybierz jakiś plik do uploadu";
+            }
+           
             return RedirectToAction("Operations");
         }
 
