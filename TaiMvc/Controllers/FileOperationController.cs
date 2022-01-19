@@ -134,14 +134,18 @@ namespace TaiMvc.Controllers
             await outputStream.FlushAsync();
         }
 
-        //tu zaczyna się upload normalny
+
+        /*    ALL UPLOADS      */
+
+
+        //upload traditional
         public IActionResult Operations() => View();
 
         public IActionResult OperationUpload(IFormFile file)
         {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
             if (file != null)
             {
-                var user = _userManager.GetUserAsync(HttpContext.User).Result;
                 var path = Path.Join(user.Localization, file.FileName);
                 using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
@@ -150,7 +154,7 @@ namespace TaiMvc.Controllers
             }
             else
             {
-                TempData["Message"] = "Wybierz jakiś plik do uploadu";
+                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
             }
             return RedirectToAction("Operations");
         }
@@ -161,15 +165,34 @@ namespace TaiMvc.Controllers
             if (file != null)
             {
                 var path = Path.Join(user.Localization, file.FileName);
-                FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    file.CopyToAsync(fileStream);
+                }
             }
             else
             {
-                TempData["Message"] = "Wybierz jakiś plik do uploadu";
+                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
             }
            
             return RedirectToAction("Operations");
         }
+        //stream upload
+        public IActionResult StreamUpload(IFormFile file)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            if (file != null)
+            {
+                var path = Path.Join(user.Localization, file.FileName);
+                
+                FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+            }
+            else
+            {
+                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+            }
 
+            return RedirectToAction("Operations");
+        }
     }
 }
