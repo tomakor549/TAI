@@ -609,3 +609,14 @@ C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\obj\Debug\ne
 C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\obj\Debug\net6.0\ref\TaiMvc.dll
 C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\obj\Debug\net6.0\TaiMvc.pdb
 C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\obj\Debug\net6.0\TaiMvc.genruntimeconfig.cache
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\AjaxControlToolkit.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNet.SignalR.Client.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.Http.Connections.Client.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.Http.Connections.Common.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.SignalR.Client.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.SignalR.Client.Core.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.AspNetCore.SignalR.Protocols.Json.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\Microsoft.Extensions.Features.dll
+C:\Users\48725\Desktop\studia\semestr 2 INFORMATYKA\mtai\Tai\TaiMvc\bin\Debug\net6.0\System.IO.Pipelines.dll

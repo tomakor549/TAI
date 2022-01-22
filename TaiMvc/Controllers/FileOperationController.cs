@@ -8,8 +8,10 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 using TaiMvc.Models;
 using TaiMvc.SpecialOperation;
+using System.Web;
 
 namespace TaiMvc.Controllers
 {
@@ -23,6 +25,8 @@ namespace TaiMvc.Controllers
         private Stopwatch stopWatch = new Stopwatch();
 
         private readonly ILogger<FileOperationController> _logger;
+
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -158,7 +162,7 @@ namespace TaiMvc.Controllers
             }
             return RedirectToAction("Operations");
         }
-        //Encryption Download
+        //Encryption Upload
         public IActionResult OperationUploadEncryption(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
@@ -174,25 +178,35 @@ namespace TaiMvc.Controllers
             {
                 ViewData["Message"] = "Wybierz jakiś plik do uploadu";
             }
-           
-            return RedirectToAction("Operations");
-        }
-        //stream upload
-        public IActionResult StreamUpload(IFormFile file)
-        {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            if (file != null)
-            {
-                var path = Path.Join(user.Localization, file.FileName);
-                
-                FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
-            }
-            else
-            {
-                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
-            }
 
             return RedirectToAction("Operations");
         }
+        //stream upload
+        [HttpPost("UploadFile")]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> UploadFile(IEnumerable<IFormFile> iFormFile)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+
+            if (iFormFile == null )
+            {
+                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+            }   
+            else
+            {
+                foreach (var file in iFormFile)
+                {
+                    var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+                    var path = Path.Join(user.Localization, fileContent.FileName);
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    
+                    }
+                }
+            }
+            return  View("Operations");
+        }
+
     }
 }

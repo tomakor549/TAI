@@ -139,10 +139,9 @@ namespace TaiMvc.Areas.Identity.Pages.Account
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                    CreateDirectory(user.Localization);
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        CreateDirectory(user.Localization);
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else

@@ -1,27 +1,29 @@
 ﻿@*
-    PLIK DO UPLOADÓW
+    FILE T0 UPLOADS
 *@
+<add namespace="System.Web.Mvc.Ajax" />
+
 
 <div>
-    <h4>Single File Upload</h4>
+    <h4>Zwykły upload</h4>
     <form asp-controller="FileOperation" asp-action="OperationUpload"
           enctype="multipart/form-data" method="post">
         <input type="file" name="file" />
-        <button type="submit">Submit</button>
+        <button type="submit">Prześlij</button>
     </form>
 
-    <h4>Single File Upload Encrypt</h4>
+    <h4>Upload z hasłem</h4>
     <form asp-controller="FileOperation" asp-action="OperationUploadEncryption"
           enctype="multipart/form-data" method="post">
         <input type="file" name="file" />
-        <button type="submit">Submit</button>
+        <button type="submit">Prześlij</button>
     </form>
 
-    
-    <h4>Single File Upload Stream</h4>
-    <form asp-controller="FileOperation" asp-action="StreamUpload"
-          enctype="multipart/form-data" method="post">
+    <h4>Upload strumieniowy</h4>
+     <form asp-controller="FileOperation" asp-action="UploadFile" method="post"
+          enctype="multipart/form-data">
         <input type="file" name="file" />
-        <button type="submit">Submit</button>
+        <button type="submit">Prześlij</button>
     </form>
+
 </div>
