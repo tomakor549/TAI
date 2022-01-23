@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using TaiMvc.Models;
 using TaiMvc.SpecialOperation;
 using System.Web;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace TaiMvc.Controllers
 {
@@ -46,7 +47,7 @@ namespace TaiMvc.Controllers
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2"))
+                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2") || actionName.Contains("FileUpload"))
                 {
                     stopWatch.Stop();
                     var time = stopWatch.ElapsedMilliseconds;
@@ -182,31 +183,63 @@ namespace TaiMvc.Controllers
             return RedirectToAction("Operations");
         }
         //stream upload
-        [HttpPost("UploadFile")]
+        //[HttpPost("UploadFile")]
         //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> UploadFile(IEnumerable<IFormFile> iFormFile)
+        //public async Task<ActionResult> UploadFile(IEnumerable<IFormFile> iFormFile)
+        //{
+        //    var user = _userManager.GetUserAsync(HttpContext.User).Result;
+
+        //    if (iFormFile == null)
+        //    {
+        //        ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+        //    }
+        //    else
+        //    {
+        //        foreach (var file in iFormFile)
+        //        {
+        //            var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+        //            var path = Path.Join(user.Localization, fileContent.FileName);
+        //            using (var fileStream = new FileStream(path, FileMode.Create))
+        //            {
+        //                await file.CopyToAsync(fileStream);
+        //            }
+
+        //        }
+        //    }
+
+        //    return  RedirectToAction("Operations");
+        //}
+
+
+        [HttpPost]
+        [DisableFormValueModelBinding]
+        public async Task<IActionResult> UploadFile()
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            FormValueProvider formModel;
+            var file = HttpContext.Request.Form.Files[0];
+            string path = Path.Join(user.Localization, file.FileName);
+            using (var stream = new FileStream (path, FileMode.Create))
+            {
+                formModel = await Request.StreamFile(stream);
+                
+            }
 
-            if (iFormFile == null )
+            var viewModel = new MyViewModel();
+
+            var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
+               valueProvider: formModel);
+
+            if (!bindingSuccessful)
             {
-                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
-            }   
-            else
-            {
-                foreach (var file in iFormFile)
+                if (!ModelState.IsValid)
                 {
-                    var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
-                    var path = Path.Join(user.Localization, fileContent.FileName);
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    
-                    }
+                    return BadRequest(formModel);
                 }
             }
-            return  View("Operations");
-        }
+            return Ok(formModel);
 
+        }
     }
+    
 }
