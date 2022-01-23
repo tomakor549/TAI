@@ -10253,19 +10253,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\48725\\.nuget\\packages\\": {}
+    "C:\\Users\\venet\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\TaiMvc.csproj",
+      "projectUniqueName": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\TaiMvc.csproj",
       "projectName": "TaiMvc",
-      "projectPath": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\TaiMvc.csproj",
-      "packagesPath": "C:\\Users\\48725\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\48725\\Desktop\\studia\\semestr 2 INFORMATYKA\\mtai\\Tai\\TaiMvc\\obj\\",
+      "projectPath": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\TaiMvc.csproj",
+      "packagesPath": "C:\\Users\\venet\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\venet\\Desktop\\Nowy folder\\Tai\\TaiMvc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\48725\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\venet\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
