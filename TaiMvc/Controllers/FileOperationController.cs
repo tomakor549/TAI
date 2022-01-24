@@ -169,10 +169,7 @@ namespace TaiMvc.Controllers
             if (file != null)
             {
                 var path = Path.Join(user.Localization, file.FileName);
-                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
-                {
-                    file.CopyToAsync(fileStream);
-                }
+                FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
             }
             else
             {
@@ -181,6 +178,7 @@ namespace TaiMvc.Controllers
 
             return RedirectToAction("Operations");
         }
+
         //stream upload
         [HttpPost("UploadFile")]
         //[ValidateAntiForgeryToken]
