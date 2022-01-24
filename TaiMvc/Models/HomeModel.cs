@@ -8,5 +8,9 @@
         {
             List = new List<string>();
         }
+
+
+        /// thid added now - nothing changed 24.01.2022
+        public string Username { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using TaiMvc.Models;
 using TaiMvc.SpecialOperation;
 using System.Web;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-
+using System.Runtime.Remoting;
 namespace TaiMvc.Controllers
 {
     [Authorize]
@@ -213,31 +213,43 @@ namespace TaiMvc.Controllers
 
         [HttpPost]
         [DisableFormValueModelBinding]
-        public async Task<IActionResult> UploadFile()
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
+          
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             FormValueProvider formModel;
-            var file = HttpContext.Request.Form.Files[0];
+            byte[] writeArray = new byte[4092];
             string path = Path.Join(user.Localization, file.FileName);
-            using (var stream = new FileStream (path, FileMode.Create))
+            const int bufferSize = 1024;
+
+            try 
             {
-                formModel = await Request.StreamFile(stream);
-                
-            }
-
-            var viewModel = new MyViewModel();
-
-            var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
-               valueProvider: formModel);
-
-            if (!bindingSuccessful)
-            {
-                if (!ModelState.IsValid)
+                using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, bufferSize, false))
                 {
-                    return BadRequest(formModel);
+                    formModel = await Request.StreamFile(stream);
+                    //file.CopyToAsync(stream);
+                    //formModel = await _context.HttpContext.Request.StreamFile(stream);
                 }
+                var viewModel = new ApplicationUser();
+
+                var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
+                   valueProvider: formModel);
+
+                if (!bindingSuccessful)
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        return BadRequest("Operations");
+                    }
+                }
+
+                return Ok("Operations");
             }
-            return Ok(formModel);
+            catch (IOException)
+            {
+                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+            }
+            return RedirectToAction("Operations");
 
         }
     }
