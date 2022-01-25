@@ -50,8 +50,8 @@ namespace TaiMvc.Controllers
                 {
                     stopWatch.Stop();
                     var time = stopWatch.ElapsedMilliseconds;
-                    _logger.LogInformation("Time: " + time.ToString() + "ms");
-                    Debug.WriteLine("Time: " + time.ToString() + "ms");
+                    _logger.LogInformation(actionName + "time: " + time.ToString() + "ms");
+                    Debug.WriteLine(actionName+" time: " + time.ToString() + "ms");
                 }
             }
         }
@@ -81,24 +81,8 @@ namespace TaiMvc.Controllers
             return File(bytes, "application/octet-stream", fileName);
         }
 
-        //normal short version stream download file
-        public FileStreamResult StreamDownloadFile(string fileName)
-        {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            var path = Path.Join(user.Localization, fileName);
-
-            Response.Headers.Add("content-disposition", "attachment; filename=" + fileName);
-            //bufferSize 4096
-            return File(new MyFileStream(path, FileMode.Open), "application/octet-stream");
-
-            //other
-            //return File(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096),
-            //"application/octet-stream");
-
-        }
-
         //abnormal long version stream download file - greater user control 
-        public async Task StreamDownloadFile2(string fileName)
+        public async Task StreamDownloadFile(string fileName)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
