@@ -183,32 +183,7 @@ namespace TaiMvc.Controllers
             return RedirectToAction("Operations");
         }
         //stream upload
-        //[HttpPost("UploadFile")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> UploadFile(IEnumerable<IFormFile> iFormFile)
-        //{
-        //    var user = _userManager.GetUserAsync(HttpContext.User).Result;
 
-        //    if (iFormFile == null)
-        //    {
-        //        ViewData["Message"] = "Wybierz jakiś plik do uploadu";
-        //    }
-        //    else
-        //    {
-        //        foreach (var file in iFormFile)
-        //        {
-        //            var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
-        //            var path = Path.Join(user.Localization, fileContent.FileName);
-        //            using (var fileStream = new FileStream(path, FileMode.Create))
-        //            {
-        //                await file.CopyToAsync(fileStream);
-        //            }
-
-        //        }
-        //    }
-
-        //    return  RedirectToAction("Operations");
-        //}
 
 
         [HttpPost]
@@ -218,13 +193,14 @@ namespace TaiMvc.Controllers
           
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             FormValueProvider formModel;
-            byte[] writeArray = new byte[4092];
-            string path = Path.Join(user.Localization, file.FileName);
+            //byte[] writeArray = new byte[4092];
+            string targetFilePath = Path.Join(user.Localization, file.FileName);
+            string tar = Path.Combine(user.Localization, file.FileName);
             const int bufferSize = 1024;
-
+            //new FileStream(targetFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, bufferSize, false))
             try 
             {
-                using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, bufferSize, false))
+                using (var stream = System.IO.File.Create(tar))
                 {
                     formModel = await Request.StreamFile(stream);
                     //file.CopyToAsync(stream);
@@ -243,7 +219,7 @@ namespace TaiMvc.Controllers
                     }
                 }
 
-                return Ok("Operations");
+                return Ok(viewModel);
             }
             catch (IOException)
             {

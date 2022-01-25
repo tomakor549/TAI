@@ -25,7 +25,14 @@
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>
-
+    <script type="text/javascript">
+function uploadFile() {        
+    var xhr = new XMLHttpRequest();                 
+    var file = document.getElementById('myfile').files[0];
+    xhr.open("POST", "api/upload");
+    xhr.setRequestHeader("filename", file.name);
+    xhr.send(file);
+}
 
 </div>
 
