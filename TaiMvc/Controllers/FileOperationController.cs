@@ -14,6 +14,9 @@ using TaiMvc.SpecialOperation;
 using System.Web;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Runtime.Remoting;
+using System.IO;
+
+
 namespace TaiMvc.Controllers
 {
     [Authorize]
@@ -29,6 +32,9 @@ namespace TaiMvc.Controllers
 
         private readonly IWebHostEnvironment webHostEnvironment;
 
+        public int count=0;
+
+        public int count2;
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
@@ -149,12 +155,34 @@ namespace TaiMvc.Controllers
         public IActionResult OperationUpload(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            
+            string pathToCheck = Path.Join(user.Localization, file.FileName);
+
             if (file != null)
             {
-                var path = Path.Join(user.Localization, file.FileName);
-                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                
+                if (System.IO.File.Exists(pathToCheck))
                 {
-                    file.CopyTo(fileStream);
+                    count++;
+                    string fileNameOnly = Path.GetFileNameWithoutExtension(pathToCheck);
+                    string extension = Path.GetExtension(pathToCheck);
+                    string path = Path.GetDirectoryName(pathToCheck);
+                    string newFullPath = pathToCheck;
+                    
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count);
+                        newFullPath = Path.Combine(path, tempFileName + extension);
+                        using (var fileStream = new FileStream(newFullPath, FileMode.Create, FileAccess.Write))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+                    
+                }
+               else
+                {
+                    using (var fileStream = new FileStream(pathToCheck, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyTo(fileStream);
+                    }
                 }
             }
             else
@@ -167,12 +195,34 @@ namespace TaiMvc.Controllers
         public IActionResult OperationUploadEncryption(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
+
+
+            string pathToCheck = Path.Join(user.Localization, file.FileName);
+
+
             if (file != null)
             {
-                var path = Path.Join(user.Localization, file.FileName);
-                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                if (System.IO.File.Exists(pathToCheck))
                 {
-                    file.CopyToAsync(fileStream);
+                    count2++;
+                    string fileNameOnly = Path.GetFileNameWithoutExtension(pathToCheck);
+                    string extension = Path.GetExtension(pathToCheck);
+                    string path = Path.GetDirectoryName(pathToCheck);
+                    string newFullPath = pathToCheck;
+                    
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count2);
+                    newFullPath = Path.Combine(path, tempFileName + extension);
+                    using (var fileStream = new FileStream(newFullPath, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyToAsync(fileStream);
+                    }
+                }
+                else
+                {
+                    using (var fileStream = new FileStream(pathToCheck, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyTo(fileStream);
+                    }
                 }
             }
             else

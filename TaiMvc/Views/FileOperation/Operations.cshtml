@@ -6,10 +6,10 @@
 
 <div>
     <h4>Zwykły upload</h4>
-    <form asp-controller="FileOperation" asp-action="OperationUpload"
+    <form asp-controller="FileOperation" asp-action="OperationUpload" 
           enctype="multipart/form-data" method="post">
-        <input type="file" name="file" />
-        <button type="submit">Prześlij</button>
+        <input type="file" name="file" onclick="OperationUpload"  />
+        <button type="submit" name = "btnUpload">Prześlij</button>
     </form>
 
     <h4>Upload z hasłem</h4>
@@ -25,14 +25,7 @@
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>
-    <script type="text/javascript">
-function uploadFile() {        
-    var xhr = new XMLHttpRequest();                 
-    var file = document.getElementById('myfile').files[0];
-    xhr.open("POST", "api/upload");
-    xhr.setRequestHeader("filename", file.name);
-    xhr.send(file);
-}
+
 
 </div>
 
