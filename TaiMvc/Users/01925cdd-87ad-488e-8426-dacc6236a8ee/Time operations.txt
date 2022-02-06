@@ -1,0 +1,12 @@
+Time: 17msTimeTaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc): 18ms
+TimeTaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc): 7ms
+Time TaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc) : 15ms
+Time TaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc) : 7ms
+Time TaiMvc.Controllers.FileOperationController.OperationUploadEncryption (TaiMvc) : 7ms
+Time TaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc) : 89ms
+Time TaiMvc.Controllers.FileOperationController.OperationUpload (TaiMvc) : 8ms
+Time TaiMvc.Controllers.FileOperationController.OperationUploadEncryption (TaiMvc) : 34ms
+Time TaiMvc.Controllers.FileOperationController.DownloadFile (TaiMvc) : 8ms
+Time TaiMvc.Controllers.FileOperationController.DownloadFile (TaiMvc) : 6ms
+Time TaiMvc.Controllers.FileOperationController.DownloadFile (TaiMvc) : 7ms
+Time TaiMvc.Controllers.FileOperationController.StreamDownloadFile (TaiMvc) : 6ms

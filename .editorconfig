@@ -2,3 +2,6 @@
 
 # CS8618: Pole niedopuszczające wartości null musi zawierać wartość inną niż null podczas kończenia działania konstruktora. Rozważ zadeklarowanie pola jako dopuszczającego wartość null.
 dotnet_diagnostic.CS8618.severity = none
+
+# CA1305: Określ interfejs IFormatProvider
+dotnet_diagnostic.CA1305.severity = none

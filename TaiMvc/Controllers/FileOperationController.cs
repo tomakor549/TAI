@@ -51,17 +51,52 @@ namespace TaiMvc.Controllers
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
+
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            string filemane = "Time operations.txt";
+            var path = Path.Join(user.Localization, filemane);
+
+
             if (actionName != null)
             {
                 if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2") || actionName.Contains("FileUpload"))
                 {
-                    stopWatch.Stop();
-                    var time = stopWatch.ElapsedMilliseconds;
-                    _logger.LogInformation("Time: " + time.ToString() + "ms");
-                    Debug.WriteLine("Time: " + time.ToString() + "ms");
+
+                    if (System.IO.File.Exists(path))
+                    {
+                        using StreamWriter file = new(path, append: true);
+
+                        stopWatch.Stop();
+                        var time = stopWatch.ElapsedMilliseconds;
+                        _logger.LogInformation("Time: " + time.ToString() + "ms");
+                        Debug.WriteLine("Time: " + time.ToString() + "ms");
+                        //fsnotex.WriteLine("Time" + actionName + ": " + time.ToString() + "ms");
+                        file.WriteLine("Time " + actionName.ToString() + " : " + time.ToString() + "ms");
+                        //AddText(fsnotex, "Time" + actionName + ": " + time.ToString() + "ms");
+                        file.Close();
+
+                    }
+                    else
+                    {
+                        using (FileStream fsex = System.IO.File.Create(path))
+                        {
+                            stopWatch.Stop();
+                            var time = stopWatch.ElapsedMilliseconds;
+                            _logger.LogInformation("Time: " + time.ToString() + "ms");
+                            Debug.WriteLine("Time: " + time.ToString() + "ms");
+                            AddText(fsex, "Time: " + time.ToString() + "ms");
+                            fsex.Close();
+                        }
+                    }
                 }
             }
         }
+        private static void AddText(FileStream fs, string value)
+        {
+            byte[] info = new UTF8Encoding(true).GetBytes(value);
+            fs.Write(info, 0, info.Length);
+        }
+
         public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
@@ -163,7 +198,7 @@ namespace TaiMvc.Controllers
                 
                 if (System.IO.File.Exists(pathToCheck))
                 {
-                    count++;
+                    count+=1;
                     string fileNameOnly = Path.GetFileNameWithoutExtension(pathToCheck);
                     string extension = Path.GetExtension(pathToCheck);
                     string path = Path.GetDirectoryName(pathToCheck);
@@ -204,7 +239,7 @@ namespace TaiMvc.Controllers
             {
                 if (System.IO.File.Exists(pathToCheck))
                 {
-                    count2++;
+                    count2+=1;
                     string fileNameOnly = Path.GetFileNameWithoutExtension(pathToCheck);
                     string extension = Path.GetExtension(pathToCheck);
                     string path = Path.GetDirectoryName(pathToCheck);
