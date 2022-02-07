@@ -16,7 +16,14 @@
             <h3>Pobieranie Zwykłe</h3>
             @foreach (var fileName in Model.List)
             {
-                <h5>@Html.ActionLink(fileName, "DownloadFile", "FileOperation", new { fileName = fileName})</h5>
+                if (fileName.EndsWith(".aes"))
+                {
+                    <h5>@Html.ActionLink(fileName, "DownloadEncodingFile", "FileOperation", new { fileName = fileName})</h5>
+                }
+                else
+                {
+                    <h5>@Html.ActionLink(fileName, "DownloadFile", "FileOperation", new { fileName = fileName})</h5>
+                }
                 
             }
             <h3>Pobieranie Strumieniowe</h3>

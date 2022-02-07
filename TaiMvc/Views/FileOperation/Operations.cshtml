@@ -6,22 +6,15 @@
 
 <div>
     <h4>Zwykły upload</h4>
-    <form asp-controller="FileOperation" asp-action="OperationUpload"
+    <form asp-controller="FileOperation" asp-action="UploadFile"
           enctype="multipart/form-data" method="post">
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>
 
     <h4>Upload z hasłem</h4>
-    <form asp-controller="FileOperation" asp-action="OperationUploadEncryption"
+    <form asp-controller="FileOperation" asp-action="UploadEncryptionFile"
           enctype="multipart/form-data" method="post">
-        <input type="file" name="file" />
-        <button type="submit">Prześlij</button>
-    </form>
-
-    <h4>Upload strumieniowy</h4>
-     <form asp-controller="FileOperation" asp-action="UploadFile" method="post"
-          enctype="multipart/form-data">
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>

@@ -26,7 +26,7 @@ namespace TaiMvc.Controllers
 
         private readonly ILogger<FileOperationController> _logger;
 
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private long lastFileSize;
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -44,38 +44,66 @@ namespace TaiMvc.Controllers
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
+
+            string fileName = "Time operations.txt";
+            var path = Path.Join(Environment.CurrentDirectory, fileName);
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2"))
+                string name;
+                if (actionName.Contains(name = "DownloadFile") ||
+                    actionName.Contains(name = "DownloadEncodingFile") ||
+                    actionName.Contains(name = "StreamDownloadFile") ||
+                    actionName.Contains(name = "StreamEncodingDownloadFile") ||
+                    actionName.Contains(name = "UploadFile"))
                 {
+                    if (!System.IO.File.Exists(path))
+                        System.IO.File.Create(fileName).Dispose();
+
+                    using StreamWriter file = new(path, append: true);
+
                     stopWatch.Stop();
+
                     var time = stopWatch.ElapsedMilliseconds;
-                    _logger.LogInformation(actionName + "time: " + time.ToString() + "ms");
-                    Debug.WriteLine(actionName+" time: " + time.ToString() + "ms");
+                    string message = $"{name}:\nTime: {time.ToString()}ms, file size: {lastFileSize}B";
+                    //message do analizy danych
+                    //string message = $"{name}\t{time.ToString()}\t{lastFileSize}";
+                    file.WriteLine(message);
+                    file.Close();
                 }
             }
         }
+
         public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
             _logger = logger;
+            lastFileSize = 0;
         }
 
         public FileResult? DownloadFile(string fileName)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
-            var len = new FileInfo(path).Length;
-            if (len > 2000000000)
+            lastFileSize = new FileInfo(path).Length;
+            if (lastFileSize > 2000000000)
+                return null;
+            byte[] bytes = System.IO.File.ReadAllBytes(path);
+
+            //Send the File to Download.
+            return File(bytes, "application/octet-stream", fileName);
+        }
+
+        public FileResult? DownloadEncodingFile(string fileName)
+        {
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var path = Path.Join(user.Localization, fileName);
+            lastFileSize = new FileInfo(path).Length;
+            if (lastFileSize > 2000000000)
                 return null;
             byte[] bytes;
-            if (fileName.EndsWith(".aes"))
-            {
-                bytes = FileEncryptionOperations.FileDecrypt(path, _encryptionPassword);
-                fileName = fileName.Remove(fileName.Length - 4);
-            }
-            else
-                bytes = System.IO.File.ReadAllBytes(path);
+
+            bytes = FileEncryptionOperations.FileDecrypt(path, _encryptionPassword);
+            fileName = fileName.Remove(fileName.Length - 4);
 
             //Send the File to Download.
             return File(bytes, "application/octet-stream", fileName);
@@ -86,7 +114,7 @@ namespace TaiMvc.Controllers
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
-            fileName = fileName.Remove(fileName.Length - 4);
+            lastFileSize = new FileInfo(path).Length;
 
             this.Response.StatusCode = 200;
             this.Response.Headers.Add(HeaderNames.ContentDisposition, $"attachment; filename=\"{fileName}\"");
@@ -109,6 +137,7 @@ namespace TaiMvc.Controllers
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
+            lastFileSize = new FileInfo(path).Length;
             fileName = fileName.Remove(fileName.Length - 4);
 
             this.Response.StatusCode = 200;
@@ -129,11 +158,12 @@ namespace TaiMvc.Controllers
         //upload traditional
         public IActionResult Operations() => View();
 
-        public IActionResult OperationUpload(IFormFile file)
+        public IActionResult UploadFile(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             if (file != null)
             {
+                lastFileSize = file.Length;
                 var path = Path.Join(user.Localization, file.FileName);
                 using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
@@ -147,11 +177,12 @@ namespace TaiMvc.Controllers
             return RedirectToAction("Operations");
         }
         //Encryption Upload
-        public IActionResult OperationUploadEncryption(IFormFile file)
+        public IActionResult UploadEncryptionFile(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             if (file != null)
             {
+                lastFileSize = file.Length;
                 var path = Path.Join(user.Localization, file.FileName);
                 FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
             }
@@ -162,33 +193,5 @@ namespace TaiMvc.Controllers
 
             return RedirectToAction("Operations");
         }
-
-        //stream upload
-        [HttpPost("UploadFile")]
-        //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> UploadFile(IEnumerable<IFormFile> iFormFile)
-        {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-
-            if (iFormFile == null )
-            {
-                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
-            }   
-            else
-            {
-                foreach (var file in iFormFile)
-                {
-                    var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
-                    var path = Path.Join(user.Localization, fileContent.FileName);
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    
-                    }
-                }
-            }
-            return  View("Operations");
-        }
-
     }
 }
