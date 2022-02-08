@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaiMvc.Data;
 using TaiMvc.Models;
+using TaiMvc.SpecialOperation.StreamUploadBinding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,20 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions
+        .AddPageApplicationModelConvention("/FileOperation",
+            model =>
+            {
+                model.Filters.Add(
+                    new GenerateAntiforgeryTokenCookieAttribute());
+                model.Filters.Add(
+                    new DisableFormValueModelBindingAttribute());
+            });
+});
+
 
 var app = builder.Build();
 

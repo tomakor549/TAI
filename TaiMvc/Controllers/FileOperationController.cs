@@ -1,12 +1,16 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 using TaiMvc.Models;
+using TaiMvc.SpecialOperation.StreamUploadBinding;
+using TaiMvc.Utilities;
 
 namespace TaiMvc.Controllers
 {
@@ -16,6 +20,10 @@ namespace TaiMvc.Controllers
     {
         private const string _encryptionPassword = "Haslo";
 
+        private readonly long _fileSizeLimit = 1509715200;
+        private static readonly FormOptions _defaultFormOptions = new FormOptions();
+        private readonly string[] _permittedExtensions = { ".txt" };
+
         private readonly UserManager<ApplicationUser> _userManager;
 
         private Stopwatch stopWatch = new Stopwatch();
@@ -24,9 +32,12 @@ namespace TaiMvc.Controllers
 
         private long lastFileSize;
 
-        public int count = 0;
-
-        public int count2;
+        public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+            _logger = logger;
+            lastFileSize = 0;
+        }
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
@@ -73,13 +84,6 @@ namespace TaiMvc.Controllers
                     file.Close();
                 }
             }
-        }
-
-        public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
-        {
-            _userManager = userManager;
-            _logger = logger;
-            lastFileSize = 0;
         }
 
         public FileResult? DownloadFile(string fileName)
@@ -225,6 +229,77 @@ namespace TaiMvc.Controllers
                     int progress=(int)((float)totalReadBytes/ (float)totalBytes * 100.0);
                 }
             }
+        }
+
+        [HttpPost]
+        [DisableFormValueModelBinding]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadPhysical()
+        {
+            if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
+            {
+                ModelState.AddModelError("File",
+                    $"The request couldn't be processed (Error 1).");
+                // Log error
+
+                return BadRequest(ModelState);
+            }
+
+            var boundary = MultipartRequestHelper.GetBoundary(
+                MediaTypeHeaderValue.Parse(Request.ContentType),
+                _defaultFormOptions.MultipartBoundaryLengthLimit);
+            var reader = new MultipartReader(boundary, HttpContext.Request.Body);
+            var section = await reader.ReadNextSectionAsync();
+
+            while (section != null)
+            {
+                var hasContentDispositionHeader =
+                    ContentDispositionHeaderValue.TryParse(
+                        section.ContentDisposition, out var contentDisposition);
+
+                if (hasContentDispositionHeader)
+                {
+                    // This check assumes that there's a file
+                    // present without form data. If form data
+                    // is present, this method immediately fails
+                    // and returns the model error.
+                    if (!MultipartRequestHelper
+                        .HasFileContentDisposition(contentDisposition))
+                    {
+                        ModelState.AddModelError("File",
+                            $"The request couldn't be processed (Error 2).");
+                        // Log error
+
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                        string path = GetNonExistPath(user.Localization, contentDisposition.FileName.Value);
+
+                        var streamedFileContent = await FileHelpers.ProcessStreamedFile(
+                    section, contentDisposition, ModelState,
+                    _permittedExtensions, _fileSizeLimit);
+
+
+                        if (!ModelState.IsValid)
+                        {
+                            return BadRequest(ModelState);
+                        }
+
+                        using (var targetStream = System.IO.File.Create(path))
+                        {
+                            await targetStream.WriteAsync(streamedFileContent);
+                        }
+                    }
+                }
+
+                // Drain any remaining section body that hasn't been consumed and
+                // read the headers for the next section.
+                section = await reader.ReadNextSectionAsync();
+            }
+
+            return Created(nameof(FileOperationController), null);
         }
     }
 
