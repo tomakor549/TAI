@@ -3,23 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using TaiMvc.Models;
-using TaiMvc.SpecialOperation;
-using System.Web;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Runtime.Remoting;
-using System.IO;
 
 namespace TaiMvc.Controllers
 {
     [Authorize]
+    [RequestSizeLimit(1509715200)]
     public class FileOperationController : Controller
     {
         private const string _encryptionPassword = "Haslo";
@@ -180,16 +172,16 @@ namespace TaiMvc.Controllers
             }
             return newPath;
         }
-        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
         public IActionResult OperationUpload(IFormFile file)
         {
             if(file != null)
             {
                 var user = _userManager.GetUserAsync(HttpContext.User).Result;
 
-                string pathToCheck = GetNonExistPath(user.Localization, file.FileName);
+                string path = GetNonExistPath(user.Localization, file.FileName);
 
-                using (var fileStream = new FileStream(pathToCheck, FileMode.Create, FileAccess.Write))
+                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
                     file.CopyTo(fileStream);
                 }
@@ -198,7 +190,7 @@ namespace TaiMvc.Controllers
             return RedirectToAction("Operations");
         }
         //Encryption Upload
-        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
         public IActionResult OperationUploadEncryption(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
@@ -209,6 +201,30 @@ namespace TaiMvc.Controllers
                 FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
             }
             return RedirectToAction("Operations");
+        }
+
+        [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
+        public async Task StreamUpload(IFormFile file)
+        {
+            if (file != null)
+            {
+                var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                string path = GetNonExistPath(user.Localization, file.FileName);
+
+                byte[] buffer = new byte[16 * 1024];
+                long totalBytes = file.Length;
+                using FileStream output = System.IO.File.Create(path);
+                using Stream input = file.OpenReadStream();
+                int totalReadBytes = 0;
+                int readBytes;
+
+                while((readBytes = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    await output.WriteAsync(buffer, 0, readBytes);
+                    totalReadBytes+=readBytes;
+                    int progress=(int)((float)totalReadBytes/ (float)totalBytes * 100.0);
+                }
+            }
         }
     }
 
