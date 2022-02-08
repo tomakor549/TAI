@@ -193,11 +193,6 @@ namespace TaiMvc.Controllers
                 {
                     file.CopyTo(fileStream);
                 }
-                ViewData["UploadStatus"] = "plik wgrano - jupiii";
-            }
-            else
-            {
-                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
 
             return RedirectToAction("Operations");
@@ -212,13 +207,7 @@ namespace TaiMvc.Controllers
             {
                 string path = GetNonExistPath(user.Localization, file.FileName);
                 FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
-                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
-            else
-            {
-                ViewData["UploadStatus"] = "plik wgrano - jupiii";
-            }
-
             return RedirectToAction("Operations");
         }
     }
