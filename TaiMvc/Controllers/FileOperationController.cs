@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -12,6 +13,9 @@ using System.Threading.Tasks;
 using TaiMvc.Models;
 using TaiMvc.SpecialOperation;
 using System.Web;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Runtime.Remoting;
+using System.IO;
 
 namespace TaiMvc.Controllers
 {
@@ -28,12 +32,19 @@ namespace TaiMvc.Controllers
 
         private long lastFileSize;
 
+        public int count = 0;
+
+        public int count2;
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
             if (actionName != null)
             {
-                if (actionName.Contains("DownloadFile") || actionName.Contains("OperationUpload") || actionName.Contains("StreamDownloadFile2"))
+                if (actionName.Contains("DownloadFile") ||
+                    actionName.Contains("DownloadEncodingFile") ||
+                    actionName.Contains("StreamDownloadFile") ||
+                    actionName.Contains("StreamEncodingDownloadFile") ||
+                    actionName.Contains("UploadFile"))
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -65,8 +76,7 @@ namespace TaiMvc.Controllers
 
                     var time = stopWatch.ElapsedMilliseconds;
                     string message = $"{name}:\nTime: {time.ToString()}ms, file size: {lastFileSize}B";
-                    //message do analizy danych
-                    //string message = $"{name}\t{time.ToString()}\t{lastFileSize}";
+                    Console.WriteLine(message);
                     file.WriteLine(message);
                     file.Close();
                 }
@@ -85,8 +95,7 @@ namespace TaiMvc.Controllers
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             lastFileSize = new FileInfo(path).Length;
-            if (lastFileSize > 2000000000)
-                return null;
+
             byte[] bytes = System.IO.File.ReadAllBytes(path);
 
             //Send the File to Download.
@@ -153,45 +162,65 @@ namespace TaiMvc.Controllers
 
 
         /*    ALL UPLOADS      */
-
-
         //upload traditional
         public IActionResult Operations() => View();
 
-        public IActionResult UploadFile(IFormFile file)
+        private static string GetNonExistPath(string localization, string fileName)
         {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            if (file != null)
+            var path = Path.Join(localization, fileName);
+            string fileNameOnly, extension, newFilename, newPath = path;
+            int count = 1;
+            while (System.IO.File.Exists(newPath))
             {
-                lastFileSize = file.Length;
-                var path = Path.Join(user.Localization, file.FileName);
-                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                fileNameOnly = Path.GetFileNameWithoutExtension(path);
+                extension = Path.GetExtension(path);
+                newFilename = string.Format("{0}({1}){2}", fileNameOnly, count, extension);
+                newPath = Path.Join(localization, newFilename);
+                count++;
+            }
+            return newPath;
+        }
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        public IActionResult OperationUpload(IFormFile file)
+        {
+            if(file != null)
+            {
+                var user = _userManager.GetUserAsync(HttpContext.User).Result;
+
+                string pathToCheck = GetNonExistPath(user.Localization, file.FileName);
+
+                using (var fileStream = new FileStream(pathToCheck, FileMode.Create, FileAccess.Write))
                 {
                     file.CopyTo(fileStream);
                 }
+                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
             else
             {
-                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
+
             return RedirectToAction("Operations");
         }
         //Encryption Upload
-        public IActionResult UploadEncryptionFile(IFormFile file)
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        public IActionResult OperationUploadEncryption(IFormFile file)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
+
             if (file != null)
             {
-                lastFileSize = file.Length;
-                var path = Path.Join(user.Localization, file.FileName);
+                string path = GetNonExistPath(user.Localization, file.FileName);
                 FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
             else
             {
-                ViewData["Message"] = "Wybierz jakiś plik do uploadu";
+                ViewData["UploadStatus"] = "plik wgrano - jupiii";
             }
 
             return RedirectToAction("Operations");
         }
     }
+
 }
