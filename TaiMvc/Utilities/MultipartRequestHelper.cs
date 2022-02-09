@@ -52,6 +52,11 @@ namespace TaiMvc.Utilities
         {
             return Path.GetFileName(contentDisposition.FileName.Value);
         }
+
+        internal static long GetFileSize(ContentDispositionHeaderValue contentDisposition)
+        {
+            return contentDisposition.Size.Value;
+        }
     }
 
 }
