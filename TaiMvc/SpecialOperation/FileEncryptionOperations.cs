@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -46,6 +47,37 @@ namespace TaiMvc.Models
                     }
                 }
             }
+        }
+
+        public static async Task<string> FileEncrypt(string filePath, Stream body, string password, byte[] buffer)
+        {
+            byte[] salt = GenerateSalt();
+            byte[] passwords = Encoding.UTF8.GetBytes(password);
+            Aes AES = Aes.Create();
+            AES.KeySize = 256;//aes 256 bit encryption c#
+            AES.BlockSize = 128;//aes 128 bit encryption c#
+            AES.Padding = PaddingMode.PKCS7;
+            var key = new Rfc2898DeriveBytes(passwords, salt, 50000);
+            AES.Key = key.GetBytes(AES.KeySize / 8);
+            AES.IV = key.GetBytes(AES.BlockSize / 8);
+            AES.Mode = CipherMode.CFB;
+            string path = filePath + ".aes";
+            using (var fsCrypt = new FileStream(path, FileMode.Create))//bazowo 4096 bajtów na rozmiar buffera
+            {
+                fsCrypt.Write(salt, 0, salt.Length);
+                using (CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    using (Stream fsIn = body)
+                    {
+                        int read;
+                        while ((read = await fsIn.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            cs.Write(buffer, 0, read);
+                        }
+                    }
+                }
+            }
+            return path;
         }
 
         public static void SaveFileEncrypt(string fileTargetPath, string password, IFormFile file)

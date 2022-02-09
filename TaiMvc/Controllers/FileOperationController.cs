@@ -21,10 +21,6 @@ namespace TaiMvc.Controllers
     {
         private const string _encryptionPassword = "Haslo";
 
-        private readonly long _fileSizeLimit = 1509715200;
-        private static readonly FormOptions _defaultFormOptions = new FormOptions();
-        private readonly string[] _permittedExtensions = { ".txt" };
-
         private readonly UserManager<ApplicationUser> _userManager;
 
         private Stopwatch stopWatch = new Stopwatch();
@@ -33,12 +29,15 @@ namespace TaiMvc.Controllers
 
         private long lastFileSize;
 
+        private readonly int operationsBuffer = 10 * 1024;
+
         public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
             _logger = logger;
             lastFileSize = 0;
         }
+
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
@@ -50,7 +49,8 @@ namespace TaiMvc.Controllers
                     actionName.Contains("StreamEncodingDownloadFile") ||
                     actionName.Contains("OperationUpload") ||
                     actionName.Contains("OperationUploadEncryption") ||
-                    actionName.Contains("StreamUpload")) 
+                    actionName.Contains("StreamUpload") ||
+                    actionName.Contains("StreamEncryptionUpload")) 
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -61,9 +61,6 @@ namespace TaiMvc.Controllers
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             string? actionName = filterContext.ActionDescriptor.DisplayName;
-
-            string fileName = "Time operations.txt";
-            var path = Path.Join(Environment.CurrentDirectory, fileName);
             if (actionName != null)
             {
                 string name;
@@ -73,26 +70,44 @@ namespace TaiMvc.Controllers
                     actionName.Contains(name = "StreamEncodingDownloadFile") ||
                     actionName.Contains(name = "OperationUpload") ||
                     actionName.Contains(name = "OperationUploadEncryption") ||
-                    actionName.Contains(name = "StreamUpload"))
+                    actionName.Contains(name = "StreamUpload") ||
+                    actionName.Contains(name = "StreamEncryptionUpload"))
                 {
-                    if (!System.IO.File.Exists(path))
-                        System.IO.File.Create(fileName).Dispose();
-
-                    using StreamWriter file = new(path, append: true);
-
                     stopWatch.Stop();
 
                     var time = stopWatch.ElapsedMilliseconds;
-                    string message = $"{name}:\nTime: {time.ToString()}ms, file size: {lastFileSize}B";
+                    string message = $"{name}:\nTime: {time}ms, file size: {lastFileSize}B";
                     Console.WriteLine(message);
-                    file.WriteLine(message);
-                    file.Close();
+                    _logger.LogInformation(message);
+
+                    string fileName = "OperationsData.txt";
+                    var path = Path.Join(Environment.CurrentDirectory, fileName);
+                    if (!System.IO.File.Exists(path))
+                        System.IO.File.Create(fileName).Dispose();
+                    try
+                    {
+                        using (var file = new StreamWriter(path, append: true))
+                        {
+                            if (file == null)
+                                return;
+                            file.WriteLine(message);
+                            file.Close();
+                        }
+                    }
+                    catch(UnauthorizedAccessException ex) 
+                    {
+                        Console.WriteLine(ex.Message);
+                        _logger.LogInformation(ex.Message);
+                    }
+
+                    
                 }
             }
         }
 
         public FileResult? DownloadFile(string fileName)
         {
+            lastFileSize = -1;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             lastFileSize = new FileInfo(path).Length;
@@ -105,11 +120,10 @@ namespace TaiMvc.Controllers
 
         public FileResult? DownloadEncodingFile(string fileName)
         {
+            lastFileSize = -1;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             lastFileSize = new FileInfo(path).Length;
-            if (lastFileSize > 2000000000)
-                return null;
             byte[] bytes;
 
             bytes = FileEncryptionOperations.FileDecrypt(path, _encryptionPassword);
@@ -122,6 +136,7 @@ namespace TaiMvc.Controllers
         //abnormal long version stream download file - greater user control 
         public async Task StreamDownloadFile(string fileName)
         {
+            lastFileSize = -1;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             lastFileSize = new FileInfo(path).Length;
@@ -131,7 +146,7 @@ namespace TaiMvc.Controllers
             this.Response.Headers.Add(HeaderNames.ContentType, "application/octet-stream");
             var inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             var outputStream = this.Response.Body;
-            const int bufferSize = 1024;
+            int bufferSize = operationsBuffer;
             var buffer = new byte[bufferSize];
             while (true)
             {
@@ -145,6 +160,7 @@ namespace TaiMvc.Controllers
         //source: https://dogschasingsquirrels.com/2020/06/02/streaming-a-response-in-net-core-webapi/
         public async Task StreamEncodingDownloadFile(string fileName)
         {
+            lastFileSize = -1;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var path = Path.Join(user.Localization, fileName);
             lastFileSize = new FileInfo(path).Length;
@@ -155,7 +171,7 @@ namespace TaiMvc.Controllers
             this.Response.Headers.Add(HeaderNames.ContentType, "application/octet-stream");
             var inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             var outputStream = this.Response.Body;
-            const int bufferSize = 1024;
+            int bufferSize = operationsBuffer;
 
             FileEncryptionOperations.FileDecrypt(ref inputStream, ref outputStream, _encryptionPassword, bufferSize);
             await outputStream.FlushAsync();
@@ -166,34 +182,21 @@ namespace TaiMvc.Controllers
         //upload traditional
         public IActionResult Operations() => View();
 
-        private static string GetNonExistPath(string localization, string fileName)
-        {
-            var path = Path.Join(localization, fileName);
-            string fileNameOnly, extension, newFilename, newPath = path;
-            int count = 1;
-            while (System.IO.File.Exists(newPath))
-            {
-                fileNameOnly = Path.GetFileNameWithoutExtension(path);
-                extension = Path.GetExtension(path);
-                newFilename = string.Format("{0}({1}){2}", fileNameOnly, count, extension);
-                newPath = Path.Join(localization, newFilename);
-                count++;
-            }
-            return newPath;
-        }
         [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
         public IActionResult OperationUpload(IFormFile file)
         {
-            if(file != null)
+            lastFileSize = -1;
+            if (file != null)
             {
                 var user = _userManager.GetUserAsync(HttpContext.User).Result;
-
-                string path = GetNonExistPath(user.Localization, file.FileName);
+                
+                string path = FileHelpers.GetNonExistPath(user.Localization, file.FileName);
 
                 using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
                     file.CopyTo(fileStream);
                 }
+                lastFileSize = file.Length;
             }
 
             return RedirectToAction("Operations");
@@ -202,12 +205,14 @@ namespace TaiMvc.Controllers
         [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
         public IActionResult OperationUploadEncryption(IFormFile file)
         {
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            lastFileSize = -1;
 
             if (file != null)
             {
-                string path = GetNonExistPath(user.Localization, file.FileName);
+                var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                string path = FileHelpers.GetNonExistPath(user.Localization, file.FileName);
                 FileEncryptionOperations.SaveFileEncrypt(path, _encryptionPassword, file);
+                lastFileSize = file.Length;
             }
             return RedirectToAction("Operations");
         }
@@ -221,22 +226,21 @@ namespace TaiMvc.Controllers
         [DisableFormValueModelBinding]
         public async Task<IActionResult> StreamUpload()
         {
-            FormValueProvider formModel;
+            lastFileSize = -1;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            formModel = await FileStreamingHelper.StreamFiles(Request, user.Localization);
-            //var viewModel = new MyViewModel();
+            var lastPath = await FileStreamingHelper.StreamFiles(Request, user.Localization, operationsBuffer);
+            lastFileSize = new FileInfo(lastPath).Length;
+            return RedirectToAction("Operations");
+        }
 
-            //var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
-            //    valueProvider: formModel);
-
-            //if (!bindingSuccessful)
-            //{
-            //    if (!ModelState.IsValid)
-            //    {
-            //        return BadRequest(ModelState);
-            //    }
-            //}
-
+        [HttpPost]
+        [DisableFormValueModelBinding]
+        public async Task<IActionResult> StreamEncryptionUpload()
+        {
+            lastFileSize = -1;
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            var lastPath = await FileStreamingHelper.StreamEncodingFiles(Request, user.Localization, _encryptionPassword, operationsBuffer);
+            lastFileSize = new FileInfo(lastPath).Length;
             return RedirectToAction("Operations");
         }
 

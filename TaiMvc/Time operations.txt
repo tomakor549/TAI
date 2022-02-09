@@ -2,3 +2,11 @@ UploadFile:
 Time: 25446ms, file size: 0B
 UploadStream:
 Time: 2796ms, file size: 0B
+OperationUpload:
+Time: 56ms, file size: 0B
+OperationUpload:
+Time: 24ms, file size: 0B
+StreamUpload:
+Time: 40325ms, file size: 0B
+StreamUpload:
+Time: 79972ms, file size: 0B

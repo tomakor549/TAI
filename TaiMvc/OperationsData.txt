@@ -1,0 +1,98 @@
+StreamUpload:
+Time: 5749ms, file size: 0B
+StreamUpload:
+Time: 2885ms, file size: 100000000B
+StreamUpload:
+Time: 363ms, file size: 10000000B
+StreamUpload:
+Time: 2856ms, file size: 100000000B
+DownloadEncodingFile:
+Time: 86ms, file size: 3991B
+DownloadEncodingFile:
+Time: 347ms, file size: 9840530B
+StreamEncryptionUpload:
+Time: 3622ms, file size: 9840530B
+OperationUpload:
+Time: 69ms, file size: 9840497B
+OperationUpload:
+Time: 406ms, file size: 9840497B
+StreamUpload:
+Time: 280ms, file size: 9840497B
+StreamEncryptionUpload:
+Time: 499ms, file size: 9840530B
+OperationUpload:
+Time: 7ms, file size: 624469B
+OperationUpload:
+Time: 106ms, file size: 624469B
+StreamUpload:
+Time: 23ms, file size: 624469B
+StreamEncryptionUpload:
+Time: 106ms, file size: 624502B
+OperationUpload:
+Time: 107ms, file size: 100000000B
+OperationUpload:
+Time: 3000ms, file size: 100000000B
+StreamUpload:
+Time: 2355ms, file size: 100000000B
+StreamEncryptionUpload:
+Time: 4131ms, file size: 100000033B
+DownloadFile:
+Time: 6ms, file size: 624469B
+DownloadEncodingFile:
+Time: 126ms, file size: 624502B
+DownloadFile:
+Time: 29ms, file size: 624469B
+DownloadFile:
+Time: 105ms, file size: 624502B
+DownloadFile:
+Time: 63ms, file size: 100000000B
+DownloadEncodingFile:
+Time: 2617ms, file size: 100000033B
+DownloadFile:
+Time: 3040ms, file size: 100000000B
+DownloadFile:
+Time: 3965ms, file size: 100000033B
+DownloadFile:
+Time: 74ms, file size: 100000000B
+DownloadFile:
+Time: 1308ms, file size: 100000000B
+DownloadEncodingFile:
+Time: 2678ms, file size: 100000033B
+DownloadFile:
+Time: 3291ms, file size: 100000033B
+DownloadFile:
+Time: 66ms, file size: 100000000B
+DownloadFile:
+Time: 654ms, file size: 100000000B
+OperationUpload:
+Time: 1ms, file size: -1B
+StreamUpload:
+Time: 25657ms, file size: 1000000000B
+DownloadFile:
+Time: 621ms, file size: 1000000000B
+DownloadFile:
+Time: 4124ms, file size: 1000000000B
+DownloadFile:
+Time: 618ms, file size: 1000000000B
+DownloadFile:
+Time: 4020ms, file size: 1000000000B
+DownloadFile:
+Time: 5253ms, file size: 1000000000B
+DownloadFile:
+Time: 5147ms, file size: 1000000000B
+DownloadFile:
+Time: 620ms, file size: 1000000000B
+DownloadFile:
+Time: 589ms, file size: 1000000000B
+DownloadFile:
+Time: 1518ms, file size: 1000000000B
+DownloadFile:
+Time: 5896ms, file size: 1000000000B
+OperationUpload:
+Time: 230ms, file size: 100000000B
+StreamUpload:
+Time: 2537ms, file size: 100000000B
+StreamUpload:
+Time: 2629ms, file size: 100000000B
+OperationUpload:
+Time: 120ms, file size: 100000000B

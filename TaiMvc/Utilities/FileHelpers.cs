@@ -269,5 +269,23 @@ namespace TaiMvc.Utilities
                 return signatures.Any(signature => headerBytes.Take(signature.Length).SequenceEqual(signature));
             }
         }
+
+        public static string GetNonExistPath(string localization, string? fileName)
+        {
+            if (fileName == null)
+                fileName = DateTime.Now.ToString();
+            var path = Path.Join(localization, fileName);
+            string fileNameOnly, extension, newFilename, newPath = path;
+            int count = 1;
+            while (System.IO.File.Exists(newPath))
+            {
+                fileNameOnly = Path.GetFileNameWithoutExtension(path);
+                extension = Path.GetExtension(path);
+                newFilename = string.Format("{0}({1}){2}", fileNameOnly, count, extension);
+                newPath = Path.Join(localization, newFilename);
+                count++;
+            }
+            return newPath;
+        }
     }
 }

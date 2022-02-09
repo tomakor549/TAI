@@ -22,20 +22,17 @@
 
     <h4>Stream Upload</h4>
     <form method="post" enctype="multipart/form-data" action="StreamUpload">
-        <div>
-            <p>Upload one or more files using this form:</p>
-            <input type="file" name="files" multiple />
-        </div>
-        @*<div>
-            <p>Your Username</p>
-            <input type="text" name="username" />
-        </div>*@
-        <div>
-            <input type="submit" value="Upload" />
-        </div>
+        <input type="file" name="files" multiple />
+        <button type="submit">Prześlij</button>
+    </form>StreamEncryptionUpload
+
+    <h4>Stream Encryption Upload</h4>
+    <form method="post" enctype="multipart/form-data" action="StreamEncryptionUpload">
+        <input type="file" name="files" multiple />
+        <button type="submit">Prześlij</button>
     </form>
 
-    <h4>Stream Upload</h4>
+    @*<h4>Stream Upload</h4>
     <form id="uploadForm" action="StreamUpload" method="post"
           enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;">
         <dl>
@@ -80,4 +77,4 @@
       if (parts.length == 2) return parts.pop().split(";").shift();
     }
   </script>
-}
+}*@
