@@ -19,11 +19,24 @@
         <button type="submit">Prześlij</button>
     </form>
 
-    <h1>Stream a file with AJAX to physical storage with a controller endpoint</h1>
 
-    <p>The following form's <code>action</code> points to a controller endpoint that only receives the file and saves it to disk. If additional form data is added to the form, the additional data is ignored by the controller action.</p>
+    <h4>Stream Upload</h4>
+    <form method="post" enctype="multipart/form-data" action="UploadStream">
+        <div>
+            <p>Upload one or more files using this form:</p>
+            <input type="file" name="files" multiple />
+        </div>
+        <div>
+            <p>Your Username</p>
+            <input type="text" name="username" />
+        </div>
+        <div>
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
 
-    <form id="uploadForm" asp-controller="FileOperation" asp-action="StreamUpload" method="post"
+    <h4>Stream Upload</h4>
+    <form id="uploadForm" action="UploadStream" method="post"
           enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;">
         <dl>
             <dt>

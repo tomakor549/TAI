@@ -47,6 +47,11 @@ namespace TaiMvc.Utilities
                 && (!string.IsNullOrEmpty(contentDisposition.FileName.Value)
                     || !string.IsNullOrEmpty(contentDisposition.FileNameStar.Value));
         }
+
+        internal static object GetFileName(ContentDispositionHeaderValue contentDisposition)
+        {
+            return Path.GetFileName(contentDisposition.FileName.Value);
+        }
     }
 
 }

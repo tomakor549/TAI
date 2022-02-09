@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -231,76 +232,36 @@ namespace TaiMvc.Controllers
             }
         }
 
+        public class MyViewModel
+        {
+            public string Username { get; set; }
+        }
+
         [HttpPost]
         [DisableFormValueModelBinding]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadPhysical()
+        public async Task<IActionResult> UploadStream()
         {
-            if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
+            FormValueProvider formModel;
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
+            formModel = await FileStreamingHelper.StreamFiles(Request, user.Localization);
+
+            var viewModel = new MyViewModel();
+
+            var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
+                valueProvider: formModel);
+
+            if (!bindingSuccessful)
             {
-                ModelState.AddModelError("File",
-                    $"The request couldn't be processed (Error 1).");
-                // Log error
-
-                return BadRequest(ModelState);
-            }
-
-            var boundary = MultipartRequestHelper.GetBoundary(
-                MediaTypeHeaderValue.Parse(Request.ContentType),
-                _defaultFormOptions.MultipartBoundaryLengthLimit);
-            var reader = new MultipartReader(boundary, HttpContext.Request.Body);
-            var section = await reader.ReadNextSectionAsync();
-
-            while (section != null)
-            {
-                var hasContentDispositionHeader =
-                    ContentDispositionHeaderValue.TryParse(
-                        section.ContentDisposition, out var contentDisposition);
-
-                if (hasContentDispositionHeader)
+                if (!ModelState.IsValid)
                 {
-                    // This check assumes that there's a file
-                    // present without form data. If form data
-                    // is present, this method immediately fails
-                    // and returns the model error.
-                    if (!MultipartRequestHelper
-                        .HasFileContentDisposition(contentDisposition))
-                    {
-                        ModelState.AddModelError("File",
-                            $"The request couldn't be processed (Error 2).");
-                        // Log error
-
-                        return BadRequest(ModelState);
-                    }
-                    else
-                    {
-                        var user = _userManager.GetUserAsync(HttpContext.User).Result;
-                        string path = GetNonExistPath(user.Localization, contentDisposition.FileName.Value);
-
-                        var streamedFileContent = await FileHelpers.ProcessStreamedFile(
-                    section, contentDisposition, ModelState,
-                    _permittedExtensions, _fileSizeLimit);
-
-
-                        if (!ModelState.IsValid)
-                        {
-                            return BadRequest(ModelState);
-                        }
-
-                        using (var targetStream = System.IO.File.Create(path))
-                        {
-                            await targetStream.WriteAsync(streamedFileContent);
-                        }
-                    }
+                    return BadRequest(ModelState);
                 }
-
-                // Drain any remaining section body that hasn't been consumed and
-                // read the headers for the next section.
-                section = await reader.ReadNextSectionAsync();
             }
 
-            return Created(nameof(FileOperationController), null);
+
+            return Ok();
         }
+
     }
 
 }

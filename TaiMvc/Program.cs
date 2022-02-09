@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using TaiMvc.Data;
 using TaiMvc.Models;
@@ -14,12 +15,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddRazorPages(options =>
+builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
 {
+    options.RootDirectory = "/Views";
     options.Conventions
-        .AddPageApplicationModelConvention("/FileOperation",
+        .AddPageApplicationModelConvention("/FileOperation/Operations",
             model =>
             {
                 model.Filters.Add(
@@ -28,8 +31,6 @@ builder.Services.AddRazorPages(options =>
                     new DisableFormValueModelBindingAttribute());
             });
 });
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

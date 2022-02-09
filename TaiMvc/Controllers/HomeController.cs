@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TaiMvc.Models;
+using TaiMvc.SpecialOperation.StreamUploadBinding;
 
 namespace TaiMvc.Controllers
 {
