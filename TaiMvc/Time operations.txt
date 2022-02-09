@@ -1,2 +1,4 @@
 UploadFile:
 Time: 25446ms, file size: 0B
+UploadStream:
+Time: 2796ms, file size: 0B

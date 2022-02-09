@@ -48,8 +48,9 @@ namespace TaiMvc.Controllers
                     actionName.Contains("DownloadEncodingFile") ||
                     actionName.Contains("StreamDownloadFile") ||
                     actionName.Contains("StreamEncodingDownloadFile") ||
-                    actionName.Contains("UploadFile") ||
-                    actionName.Contains("UploadStream")) 
+                    actionName.Contains("OperationUpload") ||
+                    actionName.Contains("OperationUploadEncryption") ||
+                    actionName.Contains("StreamUpload")) 
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -70,8 +71,9 @@ namespace TaiMvc.Controllers
                     actionName.Contains(name = "DownloadEncodingFile") ||
                     actionName.Contains(name = "StreamDownloadFile") ||
                     actionName.Contains(name = "StreamEncodingDownloadFile") ||
-                    actionName.Contains(name = "UploadFile") ||
-                    actionName.Contains("UploadStream"))
+                    actionName.Contains(name = "OperationUpload") ||
+                    actionName.Contains(name = "OperationUploadEncryption") ||
+                    actionName.Contains(name = "StreamUpload"))
                 {
                     if (!System.IO.File.Exists(path))
                         System.IO.File.Create(fileName).Dispose();
@@ -210,30 +212,6 @@ namespace TaiMvc.Controllers
             return RedirectToAction("Operations");
         }
 
-        [RequestFormLimits(BufferBodyLengthLimit = 1509715200)]
-        public async Task StreamUpload(IFormFile file)
-        {
-            if (file != null)
-            {
-                var user = _userManager.GetUserAsync(HttpContext.User).Result;
-                string path = GetNonExistPath(user.Localization, file.FileName);
-
-                byte[] buffer = new byte[16 * 1024];
-                long totalBytes = file.Length;
-                using FileStream output = System.IO.File.Create(path);
-                using Stream input = file.OpenReadStream();
-                int totalReadBytes = 0;
-                int readBytes;
-
-                while((readBytes = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    await output.WriteAsync(buffer, 0, readBytes);
-                    totalReadBytes+=readBytes;
-                    int progress=(int)((float)totalReadBytes/ (float)totalBytes * 100.0);
-                }
-            }
-        }
-
         public class MyViewModel
         {
             public string Username { get; set; }
@@ -241,12 +219,11 @@ namespace TaiMvc.Controllers
 
         [HttpPost]
         [DisableFormValueModelBinding]
-        public async Task<IActionResult> UploadStream()
+        public async Task<IActionResult> StreamUpload()
         {
             FormValueProvider formModel;
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             formModel = await FileStreamingHelper.StreamFiles(Request, user.Localization);
-
             //var viewModel = new MyViewModel();
 
             //var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
