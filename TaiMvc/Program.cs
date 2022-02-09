@@ -18,19 +18,19 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
-{
-    options.RootDirectory = "/Views";
-    options.Conventions
-        .AddPageApplicationModelConvention("/FileOperation/Operations",
-            model =>
-            {
-                model.Filters.Add(
-                    new GenerateAntiforgeryTokenCookieAttribute());
-                model.Filters.Add(
-                    new DisableFormValueModelBindingAttribute());
-            });
-});
+//builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
+//{
+//    options.RootDirectory = "/Views";
+//    options.Conventions
+//        .AddPageApplicationModelConvention("/FileOperation/Operations",
+//            model =>
+//            {
+//                model.Filters.Add(
+//                    new GenerateAntiforgeryTokenCookieAttribute());
+//                model.Filters.Add(
+//                    new DisableFormValueModelBindingAttribute());
+//            });
+//});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

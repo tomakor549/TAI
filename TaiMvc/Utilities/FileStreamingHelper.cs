@@ -21,7 +21,7 @@ namespace TaiMvc.Utilities
             {
                 throw new Exception($"Expected a multipart request, but got {request.ContentType}");
             }
-
+            int buffer = 10240;
             // Used to accumulate all the form url encoded key value pairs in the 
             // request.
             var formAccumulator = new KeyValueAccumulator();
@@ -56,7 +56,7 @@ namespace TaiMvc.Utilities
 
                         var fileName = MultipartRequestHelper.GetFileName(contentDisposition);
 
-                        var loadBufferBytes = 1024;//This is every time Http Requested section The size of the read file data in Byte That is, byte, which is set to 1024, which means that every time the Http Requested section Read and fetch 1024 bytes of data from the data stream to the server memory, and then write to the following targetFileStream This value can be adjusted according to the memory size of the server. This avoids loading the data of all uploaded files into the memory of the server at one time, leading to the server crash.
+                        var loadBufferBytes = buffer;//This is every time Http Requested section The size of the read file data in Byte That is, byte, which is set to 1024, which means that every time the Http Requested section Read and fetch 1024 bytes of data from the data stream to the server memory, and then write to the following targetFileStream This value can be adjusted according to the memory size of the server. This avoids loading the data of all uploaded files into the memory of the server at one time, leading to the server crash.
 
                         using (var targetFileStream = System.IO.File.Create(targetDirectory + "\\" + fileName))
                         {
@@ -87,7 +87,7 @@ namespace TaiMvc.Utilities
                             section.Body,
                             encoding,
                             detectEncodingFromByteOrderMarks: true,
-                            bufferSize: 1024,
+                            bufferSize: buffer,
                             leaveOpen: true))
                         {
                             // The value length limit is enforced by MultipartBodyLengthLimit

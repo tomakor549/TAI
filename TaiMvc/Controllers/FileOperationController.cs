@@ -48,7 +48,8 @@ namespace TaiMvc.Controllers
                     actionName.Contains("DownloadEncodingFile") ||
                     actionName.Contains("StreamDownloadFile") ||
                     actionName.Contains("StreamEncodingDownloadFile") ||
-                    actionName.Contains("UploadFile"))
+                    actionName.Contains("UploadFile") ||
+                    actionName.Contains("UploadStream")) 
                 {
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -69,7 +70,8 @@ namespace TaiMvc.Controllers
                     actionName.Contains(name = "DownloadEncodingFile") ||
                     actionName.Contains(name = "StreamDownloadFile") ||
                     actionName.Contains(name = "StreamEncodingDownloadFile") ||
-                    actionName.Contains(name = "UploadFile"))
+                    actionName.Contains(name = "UploadFile") ||
+                    actionName.Contains("UploadStream"))
                 {
                     if (!System.IO.File.Exists(path))
                         System.IO.File.Create(fileName).Dispose();
@@ -245,21 +247,20 @@ namespace TaiMvc.Controllers
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             formModel = await FileStreamingHelper.StreamFiles(Request, user.Localization);
 
-            var viewModel = new MyViewModel();
+            //var viewModel = new MyViewModel();
 
-            var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
-                valueProvider: formModel);
+            //var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",
+            //    valueProvider: formModel);
 
-            if (!bindingSuccessful)
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-            }
+            //if (!bindingSuccessful)
+            //{
+            //    if (!ModelState.IsValid)
+            //    {
+            //        return BadRequest(ModelState);
+            //    }
+            //}
 
-
-            return Ok();
+            return RedirectToAction("Operations");
         }
 
     }
