@@ -31,7 +31,7 @@ namespace TaiMvc.Controllers
 
         private long lastFileSize;
 
-        private readonly int operationsBuffer = 10 * 1024;
+        private readonly int operationsBuffer = 4 * 1024;
 
         public FileOperationController(ILogger<FileOperationController> logger, UserManager<ApplicationUser> userManager)
         {
