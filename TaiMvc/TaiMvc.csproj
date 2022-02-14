@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Users\00d9b6e4-6acd-40db-96f8-afc202b5eee1\" />
+    <Folder Include="Users\02d22b96-6770-476e-8519-b035e3d62038\" />
+    <Folder Include="Users\b4ba2c7b-1a0f-4a47-b362-eb811019c6a2\" />
     <Folder Include="wwwroot\mediaUpload\" />
   </ItemGroup>
 

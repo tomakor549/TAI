@@ -1,30 +1,28 @@
-﻿@*
-    FILE T0 UPLOADS
-*@
+﻿@model TaiMvc.Views.FileOperation.Operations
+
 <add namespace="System.Web.Mvc.Ajax" />
 
 
 <div>
     <h4>Zwykły upload</h4>
-    <form asp-controller="FileOperation" asp-action="OperationUpload"
+    <form action="OperationUpload"
           enctype="multipart/form-data" method="post">
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>
 
     <h4>Upload z hasłem</h4>
-    <form asp-controller="FileOperation" asp-action="OperationUploadEncryption"
+    <form action="OperationUploadEncryption"
           enctype="multipart/form-data" method="post">
         <input type="file" name="file" />
         <button type="submit">Prześlij</button>
     </form>
 
-
     <h4>Stream Upload</h4>
     <form method="post" enctype="multipart/form-data" action="StreamUpload">
         <input type="file" name="files" multiple />
         <button type="submit">Prześlij</button>
-    </form>StreamEncryptionUpload
+    </form>
 
     <h4>Stream Encryption Upload</h4>
     <form method="post" enctype="multipart/form-data" action="StreamEncryptionUpload">
@@ -32,6 +30,12 @@
         <button type="submit">Prześlij</button>
     </form>
 
+    <h4>Stream Upload 5.x sample</h4>
+    <form method="post" enctype="multipart/form-data" action="UploadLargeFile">
+        <input type="file" name="files" multiple />
+        <button type="submit">Prześlij</button>
+    </form>
+</div>
     @*<h4>Stream Upload</h4>
     <form id="uploadForm" action="StreamUpload" method="post"
           enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;">
